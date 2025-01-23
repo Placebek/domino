@@ -9,8 +9,8 @@ export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   linkActiveClass: 'active',
   routes: [
-    { path: '/', component: Home },
-    { path: '/video', component: VideoC },
+    { path: '/', component: VideoC },
+    { path: '/video', component: Home },
     { path: '/login', component: Login },
   ],
 })
