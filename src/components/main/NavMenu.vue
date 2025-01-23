@@ -6,7 +6,12 @@
         class="flex items-center justify-center absolute inset-x-0 top-1/2 transform -translate-y-1/2"
       >
         <RouterLink to="/home">
-          <DominoHomeSVG customClass="w-[14vw] h-[5vh]" />
+          <DominoHomeSVG customClass="w-[11vw] h-[5vh]" strokeWidthCustom="3" />
+        </RouterLink>
+      </div>
+      <div class="absolute right-[10vw] mt-[1.5vh]">
+        <RouterLink to="/profile">
+          <UserProfileSVG customClass="w-[11vw] h-[5vh]" />
         </RouterLink>
       </div>
     </div>
@@ -20,6 +25,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '../../stores/auth.store.js'
 import DominoHomeSVG from '../UI/svg/DominoHomeSVG.vue'
+import UserProfileSVG from '../UI/svg/UserProfileSVG.vue'
 const authStore = useAuthStore()
 </script>
 
@@ -27,7 +33,6 @@ const authStore = useAuthStore()
 .arc-menu {
   width: 100%; /* Полная ширина */
   height: 100%; /* Высота контейнера */
-  background-color: #60a5fa; /* Цвет фона */
   border-top-left-radius: 20px; /* Закругление слева */
   border-top-right-radius: 20px; /* Закругление справа */
   height: 8vh; /* Высота дуги */
@@ -39,9 +44,5 @@ const authStore = useAuthStore()
 
 .arc-menu .router-link {
   color: white;
-}
-
-.arc-menu .router-link:hover {
-  color: #ddd; /* Цвет при наведении */
 }
 </style>

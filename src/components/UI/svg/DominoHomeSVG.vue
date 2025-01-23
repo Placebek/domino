@@ -4,6 +4,7 @@
     :fill="fillColor"
     :width="width"
     :height="height"
+    :stroke-width="strokeWidthCustom"
     version="1.1"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"
@@ -66,6 +67,10 @@ export default {
     customClass: {
       type: String,
       default: '',
+    },
+    strokeWidthCustom: {
+      type: String,
+      default: '1.5',
     },
     fillColor: {
       type: String,
