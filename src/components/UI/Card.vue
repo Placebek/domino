@@ -10,9 +10,24 @@ export default {
 </script>
 
 <template>
-  <div class="bg-gray-200 w-[90vw] h-[20vh] m-auto mt-[2vh] rounded-lg shadow-lg">
-    <div class="text-center text-3xl font-bold mt-5">{{ articleData.title }}</div>
-    <div class="text-center text-xl mt-5">{{ articleData.description }}</div>
-    <div class="text-center text-xl mt-5">{{ articleData.content }}</div>
+  <div class="flex justify-center items-center">
+    <div class="bg-white w-[90vw] h-[20vh] rounded-lg shadow-lg">
+      <div class="w-full h-[10vh]">
+        <img :src="articleData.photos.url" alt="" />
+      </div>
+      <div class="text-center text-lg mt-2">{{ articleData.price }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.house_type.name }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.character.area }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.character.count_rooms }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.character.year_of_construction }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.character.is_with_furniture }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.address.city.name }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.address.district.name }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.address.street.name }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.address.house_number }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.address.apartment_number }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.address.floor }}</div>
+      <div class="text-center text-lg mt-2">{{ articleData.description }}</div>
+    </div>
   </div>
 </template>
