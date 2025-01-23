@@ -1,10 +1,9 @@
 <script setup>
-import Header from './components/main/Header.vue'
-import Footer from './components/main/Footer.vue'
+import NavMenu from './components/main/NavMenu.vue'
 </script>
 
 <template>
-  <div class="min-h-screen">
-    <Header />
+  <div class="fixed w-full bottom-0">
+    <NavMenu />
   </div>
 </template>
