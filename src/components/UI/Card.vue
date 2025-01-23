@@ -1,6 +1,9 @@
 <script>
-import point from '../UI/svg/svg'
+import { Point } from './svg/svg'
 export default {
+  components: {
+    Point,
+  },
   props: ['articledata'],
   data() {
     return {
@@ -43,15 +46,11 @@ const formatPrice = (price) => {
 
       <div class="flex gap-2 flex-row ml-2 text-[1.7vh] font-medium">
         <div class="">{{ articleData.house_type.name }}</div>
-        <svg width="10" height="10" class="mt-[0.8vh]">
-          <circle cx="5" cy="5" r="4" fill="gray" />
-        </svg>
+        <Point custom_style="mt-[0.8vh]" />
         <div class="">{{ articleData.character.area }} m^2</div>
-        <svg width="10" height="10" class="mt-[0.8vh]">
-          <circle cx="5" cy="5" r="4" fill="gray" />
-        </svg>
+        <Point custom_style="mt-[0.8vh]" />
         <div class="">{{ articleData.address.floor }}-қабат</div>
-        {{ point() }}
+        <Point custom_style="mt-[0.8vh]" />
         <div class="">{{ articleData.character.year_of_construction }} ж</div>
       </div>
 

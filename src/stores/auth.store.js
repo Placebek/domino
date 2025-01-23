@@ -12,11 +12,11 @@ export const useAuthStore = defineStore({
     returnUrl: null,
   }),
   actions: {
-    async login(tg_id, password) {
+    async login(phone_number, password) {
       try {
         const response = await axios.post(
           baseUrl,
-          { tg_id, password },
+          { phone_number, password },
           { referrerPolicy: 'unsafe-url' }, // при необходимости можно убрать
         )
 
