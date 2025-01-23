@@ -1,2 +1,9 @@
 env/
 .env
+
+alembic.ini
+
+__pycache__/
+*.pyc
+*.pyo
+alembic/versions/

@@ -1,9 +1,43 @@
-from dataclasses import Field
-from datetime import datetime
-from typing import Optional
-from sqlalchemy import Boolean, DateTime, String, Integer, Float, ForeignKey, Date, func, Text, Column
+from sqlalchemy import Boolean, DateTime, String, Integer, Float, ForeignKey, Text, Column
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from database.db import Base
+
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    firstname = Column(String(75), nullable=False)
+    lastname = Column(String(75), nullable=False)
+    email = Column(String(75), nullable=False, unique=True)
+    password = Column(String(75), nullable=False)
+    photo = Column(String(75), nullable=True)
+
+    card_id = Column(Integer, ForeignKey('cards.id', ondelete='CASCADE'), nullable=True)
+    card = relationship("Card", back_populates="user")
+    deals = relationship("Deal", back_populates="user")
+    seller_houses = relationship("SellerHouse", back_populates="user")
+
+
+class SellerHouse(Base):
+    __tablename__ = 'seller_houses'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    house_id = Column(Integer, ForeignKey('houses.id', ondelete='CASCADE'), nullable=False)
+
+    user = relationship("User", back_populates="seller_houses")
+    house = relationship("House", back_populates="seller_houses")
+
+
+class Card(Base):
+    __tablename__ = 'cards'
+
+    id = Column(Integer, primary_key=True, index=True)
+    card_token = Column(String(75), nullable=False)
+
+    user = relationship("User", back_populates="card")
 
 
 class House(Base):
@@ -11,17 +45,19 @@ class House(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     price = Column(Integer, nullable=False)
-    discription = Column(Text, nullable=False)
-    is_selled = Column(Boolean, default=True)
+    description = Column(Text, nullable=False)
+    is_selled = Column(Boolean, default=False)
 
     address_id = Column(Integer, ForeignKey('addresses.id', ondelete='CASCADE'), nullable=False)
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
     character_id = Column(Integer, ForeignKey('characteristics.id', ondelete='CASCADE'), nullable=False)
 
-    address = relationship("Address", back_populates="house")
-    type = relationship("HouseType", back_populates="house")
-    characteristics = relationship("Characteristic", back_populates="house")
+    address = relationship("Address", back_populates="houses")
+    type = relationship("HouseType", back_populates="houses")
+    characteristic = relationship("Characteristic", back_populates="houses")
     deals = relationship("Deal", back_populates="house")
+    seller_houses = relationship("SellerHouse", back_populates="house")
+    house_photos = relationship("HousePhoto", back_populates="house")
 
 
 class Address(Base):
@@ -29,16 +65,16 @@ class Address(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     house_number = Column(Integer, nullable=False)
-    apartment_number = Column(Integer, nullable=False)
-    floor = Column(Integer, nullable=False)
+    apartment_number = Column(Integer, nullable=True)
+    floor = Column(Integer, nullable=True)
 
     city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)
     district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
     street_id = Column(Integer, ForeignKey('streets.id', ondelete='CASCADE'), nullable=False)
 
-    city = relationship("City", back_populates="address")
-    district = relationship("District", back_populates="address")
-    street = relationship("Street", back_populates="address")
+    city = relationship("City", back_populates="addresses")
+    district = relationship("District", back_populates="addresses")
+    street = relationship("Street", back_populates="addresses")
     houses = relationship("House", back_populates="address")
 
 
@@ -48,16 +84,16 @@ class City(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
 
-    address = relationship("Address", back_populates="city")
+    addresses = relationship("Address", back_populates="city")
 
 
-class Dictrict(Base):
+class District(Base):
     __tablename__ = 'districts'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
 
-    address = relationship("Address", back_populates="district")
+    addresses = relationship("Address", back_populates="district")
 
 
 class Street(Base):
@@ -66,7 +102,7 @@ class Street(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
 
-    address = relationship("Address", back_populates="street")
+    addresses = relationship("Address", back_populates="street")
 
 
 class HouseType(Base):
@@ -75,7 +111,7 @@ class HouseType(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
 
-    house = relationship("House", back_populates="type")
+    houses = relationship("House", back_populates="type")
 
 
 class Photo(Base):
@@ -84,19 +120,18 @@ class Photo(Base):
     id = Column(Integer, primary_key=True, index=True)
     photo_link = Column(String(100), nullable=False)
 
-    house_photo = relationship("HousePhoto", back_populates="photo")
+    house_photos = relationship("HousePhoto", back_populates="photo")
 
 
 class HousePhoto(Base):
     __tablename__ = 'house_photos'
 
     id = Column(Integer, primary_key=True, index=True)
-
     house_id = Column(Integer, ForeignKey('houses.id', ondelete='CASCADE'), nullable=False)
     photo_id = Column(Integer, ForeignKey('photos.id', ondelete='CASCADE'), nullable=False)
 
-    house = relationship("House", back_populates="house_photo")
-    photo = relationship("Photo", back_populates="house_photo")
+    house = relationship("House", back_populates="house_photos")
+    photo = relationship("Photo", back_populates="house_photos")
 
 
 class Characteristic(Base):
@@ -104,11 +139,11 @@ class Characteristic(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     count_room = Column(Integer, nullable=False)
-    is_furnitures = Column(Boolean, nullable=False)
+    is_furnished = Column(Boolean, nullable=False)
     year_of_construction = Column(Integer, nullable=False)
     area = Column(Float, nullable=False)
 
-    house = relationship("House", back_populates="characteristics")
+    houses = relationship("House", back_populates="characteristic")
 
 
 class Deal(Base):
@@ -119,9 +154,7 @@ class Deal(Base):
     final_price = Column(Integer, nullable=False)
 
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    seller_id = Column(Integer, ForeignKey('sellers.id', ondelete='CASCADE'), nullable=False)
     house_id = Column(Integer, ForeignKey('houses.id', ondelete='CASCADE'), nullable=False)
 
-    user = relationship("User", back_populates="deal")
-    seller = relationship("Seller", back_populates="deal")
-    house = relationship("House", back_populates="deal")
+    user = relationship("User", back_populates="deals")
+    house = relationship("House", back_populates="deals")
