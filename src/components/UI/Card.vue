@@ -1,4 +1,5 @@
 <script>
+import point from '../UI/svg/svg'
 export default {
   props: ['articledata'],
   data() {
@@ -50,9 +51,7 @@ const formatPrice = (price) => {
           <circle cx="5" cy="5" r="4" fill="gray" />
         </svg>
         <div class="">{{ articleData.address.floor }}-қабат</div>
-        <svg width="10" height="10" class="mt-[0.8vh]">
-          <circle cx="5" cy="5" r="4" fill="gray" />
-        </svg>
+        {{ point() }}
         <div class="">{{ articleData.character.year_of_construction }} ж</div>
       </div>
 

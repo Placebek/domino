@@ -1,5 +1,6 @@
 <script setup>
 import Card from '../../components/UI/Card.vue'
+import logo from '../../assets/img/logo_domino.png'
 import { ref, computed, onMounted } from 'vue'
 // import { getHouses } from '../../services/houses'
 const product = ref([
@@ -181,7 +182,10 @@ const product = ref([
 </script>
 
 <template>
-  <div class="mt-[5vh]">
+  <div class="">
+    <div class="flex justify-center items-center w-[30vw] h-[10vh]">
+      <img :src="logo" alt="" />
+    </div>
     <div class="text-3xl font-bold text-center">Дома</div>
     <div v-for="item in product" :key="item.id">
       <Card :articledata="item" />

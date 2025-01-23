@@ -3,7 +3,7 @@ import NavMenu from './components/main/NavMenu.vue'
 </script>
 
 <template>
-  <div class="fixed w-full bottom-0">
+  <div class="min-h-screen">
     <NavMenu />
   </div>
 </template>
