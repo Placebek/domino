@@ -6,11 +6,11 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-  <div class="bg-green-700 h-[6.5vh] w-full relative">
+  <div class="bg-blue-700 h-[5vh] w-full relative">
     <div
-      class="text-white text-[1.9vw] font-semibold ml-[3vw] cursor-pointer hover:text-gray-300 flex justify-center items-center w-[5vw] absolute"
+      class="text-white text-[2vh] font-semibold ml-[3vw] cursor-pointer hover:text-gray-300 flex items-center absolute mt-2"
     >
-      TAZA
+      Domino
     </div>
     <div class="flex justify-end gap-x-5 mr-[2vw]">
       <a

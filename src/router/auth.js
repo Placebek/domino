@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import { useAuthStore } from '../stores/auth.store'
 import { Login } from '../components/pages'
+import { Home } from '../components/pages'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,7 +10,6 @@ export const router = createRouter({
   routes: [
     { path: '/', component: Home },
     { path: '/login', component: Login },
-    { path: '/order', component: Orders },
   ],
 })
 
@@ -20,6 +20,6 @@ router.beforeEach(async (to) => {
 
   if (authRequired && !auth.user) {
     auth.returnUrl = to.fullPath
-    return '/login'
+    return '/'
   }
 })

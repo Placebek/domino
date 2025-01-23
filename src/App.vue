@@ -5,6 +5,6 @@ import Footer from './components/main/Footer.vue'
 
 <template>
   <div class="min-h-screen">
-    <Footer />
+    <Header />
   </div>
 </template>

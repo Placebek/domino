@@ -12,6 +12,12 @@ export default defineConfig({
     vueJsx(),
     // vueDevTools(),
   ],
+  server: {
+    // https: {
+    //   key: fs.readFileSync('./key.pem'),
+    //   cert: fs.readFileSync('./cert.pem'),
+    // },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
