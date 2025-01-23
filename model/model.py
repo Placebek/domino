@@ -13,6 +13,7 @@ class User(Base):
     email = Column(String(75), nullable=False, unique=True)
     password = Column(String(75), nullable=False)
     photo = Column(String(75), nullable=True)
+    phone_number = Column(Integer, nullable=False)
 
     card_id = Column(Integer, ForeignKey('cards.id', ondelete='CASCADE'), nullable=True)
     card = relationship("Card", back_populates="user")
@@ -36,6 +37,7 @@ class Card(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     card_token = Column(String(75), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     user = relationship("User", back_populates="card")
 
@@ -47,6 +49,7 @@ class House(Base):
     price = Column(Integer, nullable=False)
     description = Column(Text, nullable=False)
     is_selled = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     address_id = Column(Integer, ForeignKey('addresses.id', ondelete='CASCADE'), nullable=False)
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
@@ -67,6 +70,7 @@ class Address(Base):
     house_number = Column(Integer, nullable=False)
     apartment_number = Column(Integer, nullable=True)
     floor = Column(Integer, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)
     district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
@@ -83,6 +87,7 @@ class City(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     addresses = relationship("Address", back_populates="city")
 
@@ -92,6 +97,7 @@ class District(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     addresses = relationship("Address", back_populates="district")
 
@@ -101,6 +107,7 @@ class Street(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     addresses = relationship("Address", back_populates="street")
 
@@ -110,6 +117,7 @@ class HouseType(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(75), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     houses = relationship("House", back_populates="type")
 
@@ -119,6 +127,7 @@ class Photo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     photo_link = Column(String(100), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     house_photos = relationship("HousePhoto", back_populates="photo")
 
@@ -127,6 +136,8 @@ class HousePhoto(Base):
     __tablename__ = 'house_photos'
 
     id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime(timezone=True), default=func.now())
+
     house_id = Column(Integer, ForeignKey('houses.id', ondelete='CASCADE'), nullable=False)
     photo_id = Column(Integer, ForeignKey('photos.id', ondelete='CASCADE'), nullable=False)
 
@@ -142,6 +153,7 @@ class Characteristic(Base):
     is_furnished = Column(Boolean, nullable=False)
     year_of_construction = Column(Integer, nullable=False)
     area = Column(Float, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     houses = relationship("House", back_populates="characteristic")
 
@@ -152,6 +164,7 @@ class Deal(Base):
     id = Column(Integer, primary_key=True, index=True)
     transaction_time = Column(DateTime(timezone=True), default=func.now())
     final_price = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now())
 
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     house_id = Column(Integer, ForeignKey('houses.id', ondelete='CASCADE'), nullable=False)
