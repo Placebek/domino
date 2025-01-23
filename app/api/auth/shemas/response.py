@@ -3,4 +3,4 @@ from pydantic import BaseModel
 
 class TokenResponse(BaseModel):
     access_token: str
-    access_token_expire_time: int
+    access_token_expire_time: str

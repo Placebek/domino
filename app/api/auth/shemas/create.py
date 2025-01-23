@@ -6,8 +6,8 @@ class UserCreate(BaseModel):
     lastname: str
     email: str
     password: str
-    phone_number: int
+    phone_number: str
 
 class UserBase(BaseModel):
-    phone_number: int
+    phone_number: str
     password: str

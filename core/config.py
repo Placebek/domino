@@ -1,4 +1,4 @@
-import os 
+import os
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from core.config_path import BasePath
@@ -22,11 +22,12 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL_asyncpg(self):
         self.reload_env()
-        return f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASS')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
-    
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
     TOKEN_ALGORITHM: str = 'HS256'
-    TOKEN_EXPIRE_MINUTES: int = 60 * 20
+    TOKEN_EXPIRE_MINUTES: int = 60 * 20  
 
     DATETIME_FORMAT: str = '%d-%m-%Y %H:%M:%S'
+
 
 settings = Settings()

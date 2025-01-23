@@ -22,7 +22,7 @@ async def user_register(user: UserCreate, db: AsyncSession):
             firstname = user.firstname,
             lastname = user.lastname,
             email = user.email,
-            passord = hash_password,
+            password = hash_password(user.password),
             phone_number = user.phone_number
         ).returning(User.id)
     )
@@ -52,7 +52,7 @@ async def user_login(user: UserBase, db: AsyncSession):
     )
     db_user = stmt.scalar_one_or_none()
 
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+    if not db_user or not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid phone number or password")
     
     access_token, expire_time = create_access_token(data={"sub": str(db_user.id)})

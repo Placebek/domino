@@ -13,7 +13,7 @@ class User(Base):
     email = Column(String(75), nullable=False, unique=True)
     password = Column(String(75), nullable=False)
     photo = Column(String(75), nullable=True)
-    phone_number = Column(Integer, nullable=False)
+    phone_number = Column(String(20), nullable=False)
 
     card_id = Column(Integer, ForeignKey('cards.id', ondelete='CASCADE'), nullable=True)
     card = relationship("Card", back_populates="user")
