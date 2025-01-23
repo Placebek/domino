@@ -31,3 +31,4 @@ coverage
 
 key.pem
 cert.pem
+.env
