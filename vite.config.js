@@ -13,6 +13,8 @@ export default defineConfig({
     // vueDevTools(),
   ],
   server: {
+    host: '127.0.0.1', // Делаем сервер доступным для других устройств в сети
+    port: 3000, // Укажите желаемый порт
     // https: {
     //   key: fs.readFileSync('./key.pem'),
     //   cert: fs.readFileSync('./cert.pem'),
