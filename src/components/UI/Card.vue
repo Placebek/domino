@@ -1,5 +1,6 @@
 <script>
 import { Point } from './svg/svg'
+
 export default {
   components: {
     Point,
@@ -8,11 +9,26 @@ export default {
   data() {
     return {
       articleData: this.articledata,
+      currentPhotoIndex: 0, // Индекс текущей фотографии
     }
   },
   methods: {
     goToDetails() {
       this.$router.push(`/${this.articleData.id}`) // Переход на страницу с ID
+    },
+    nextPhoto() {
+      if (this.currentPhotoIndex < this.articleData.photos.length - 1) {
+        this.currentPhotoIndex++
+      } else {
+        this.currentPhotoIndex = 0 // Если достигли последней фотографии, переходим на первую
+      }
+    },
+    prevPhoto() {
+      if (this.currentPhotoIndex > 0) {
+        this.currentPhotoIndex--
+      } else {
+        this.currentPhotoIndex = this.articleData.photos.length - 1 // Если на первой, то переходим на последнюю
+      }
     },
   },
 }
@@ -25,17 +41,42 @@ const formatPrice = (price) => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center mt-[2vh] cursor-pointer" @click="goToDetails">
+  <div class="flex justify-center items-center mt-[2vh] cursor-pointer" @click="">
     <div class="bg-white w-[90vw] h-[27vh] rounded-2xl shadow-lg border-2">
       <div class="w-[90vw] h-[15vh] relative flex justify-center items-center border-b-[2px]">
         <!-- Фон с размытием -->
         <div
+          v-if="articleData.photos && articleData.photos.length > 0"
           class="absolute inset-0 bg-cover bg-center blur-sm rounded-t-2xl"
-          :style="{ backgroundImage: `url(${articleData.photos.url})` }"
+          :style="{ backgroundImage: `url(${articleData.photos[currentPhotoIndex].url})` }"
         ></div>
 
         <!-- Основное изображение -->
-        <img :src="articleData.photos.url" alt="" class="relative z-10 object-contain h-[15vh]" />
+        <img
+          v-if="articleData.photos && articleData.photos.length > 0"
+          :src="articleData.photos[currentPhotoIndex].url"
+          alt=""
+          class="relative z-10 object-contain h-[15vh]"
+        />
+
+        <!-- Кнопки для переключения изображений -->
+        <button
+          @click="prevPhoto"
+          class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-60 p-2 rounded-full"
+          :disabled="articleData.photos.length <= 1"
+        >
+          ←
+        </button>
+        <button
+          @click="nextPhoto"
+          class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-60 p-2 rounded-full"
+          :disabled="articleData.photos.length <= 1"
+        >
+          →
+        </button>
+        <div class="absolute bottom-1 left-1 text-[1.5vh] text-white font-medium">
+          {{ currentPhotoIndex + 1 }} / {{ articleData.photos.length }}
+        </div>
       </div>
 
       <div>
@@ -60,6 +101,8 @@ const formatPrice = (price) => {
           {{ articleData.address.street.name }} көш., {{ articleData.address.house_number }}-үй
         </div>
       </div>
+
+      <!-- Индикатор текущего положения -->
     </div>
   </div>
 </template>

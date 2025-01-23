@@ -28,10 +28,14 @@ const product = ref([
       id: 1,
       name: 'Вторичка',
     },
-    photos: {
-      id: 1,
-      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
-    },
+    photos: [
+      { id: 1, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+      {
+        id: 2,
+        url: 'https://images.unsplash.com/photo-1737405555489-78b3755eaa81?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      },
+      { id: 3, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+    ],
     price: 10000000,
     description: 'Описание дома ',
     character: {
@@ -67,10 +71,14 @@ const product = ref([
       id: 2,
       name: 'Вторичка',
     },
-    photos: {
-      id: 1,
-      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
-    },
+    photos: [
+      { id: 1, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+      {
+        id: 2,
+        url: 'https://images.unsplash.com/photo-1737405555489-78b3755eaa81?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      },
+      { id: 3, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+    ],
     price: 20000000,
     description: 'Описание дома 2',
     character: {
@@ -106,10 +114,14 @@ const product = ref([
       id: 3,
       name: 'Вторичка',
     },
-    photos: {
-      id: 1,
-      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
-    },
+    photos: [
+      { id: 1, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+      {
+        id: 2,
+        url: 'https://images.unsplash.com/photo-1737405555489-78b3755eaa81?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      },
+      { id: 3, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+    ],
     price: 30000000,
     description: 'Описание дома 3',
     character: {
@@ -145,10 +157,14 @@ const product = ref([
       id: 4,
       name: 'Вторичка',
     },
-    photos: {
-      id: 1,
-      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
-    },
+    photos: [
+      { id: 1, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+      {
+        id: 2,
+        url: 'https://images.unsplash.com/photo-1737405555489-78b3755eaa81?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      },
+      { id: 3, url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg' },
+    ],
     price: 40000000,
     description: 'Описание дома 4',
     character: {
@@ -186,6 +202,7 @@ const product = ref([
     <div class="flex justify-center items-center w-[30vw] h-[10vh]">
       <img :src="logo" alt="" />
     </div>
+
     <div class="text-3xl font-bold text-center">Дома</div>
     <div v-for="item in product" :key="item.id">
       <Card :articledata="item" />
