@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { router } from '../router/auth'
+import { router } from '../router/routers'
 import axios from 'axios'
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/auth/admin/login`

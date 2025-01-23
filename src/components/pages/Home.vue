@@ -66,6 +66,10 @@ const product = ref([
       id: 2,
       name: 'Вторичка',
     },
+    photos: {
+      id: 1,
+      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
+    },
     price: 20000000,
     description: 'Описание дома 2',
     character: {
@@ -101,6 +105,10 @@ const product = ref([
       id: 3,
       name: 'Вторичка',
     },
+    photos: {
+      id: 1,
+      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
+    },
     price: 30000000,
     description: 'Описание дома 3',
     character: {
@@ -135,6 +143,10 @@ const product = ref([
     house_type: {
       id: 4,
       name: 'Вторичка',
+    },
+    photos: {
+      id: 1,
+      url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
     },
     price: 40000000,
     description: 'Описание дома 4',
