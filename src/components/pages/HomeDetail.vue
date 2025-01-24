@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-xl shadow-md space-y-4 relative">
+  <div class="bg-white rounded-xl shadow-md relative">
     <!-- Кнопка назад -->
     <button
       @click="$router.push('/')"
@@ -22,49 +22,43 @@
     </button>
 
     <div v-if="house">
-      <div>
+      <!-- Слайдер -->
+      <div
+        class="slider-container w-full h-[40vh] relative overflow-hidden"
+        @touchstart="onTouchStart"
+        @touchend="onTouchEnd"
+      >
+        <!-- Лента изображений -->
         <div
-          class="w-full h-[40vh] relative flex justify-center items-center border-b-[2px] overflow-hidden"
-          @touchstart="onTouchStart"
-          @touchend="onTouchEnd"
+          class="slider-track flex transition-transform duration-500"
+          :style="{ transform: `translateX(-${currentPhotoIndex * 100}%)` }"
         >
-          <!-- Фон с эффектом blur -->
+          <!-- Каждое изображение -->
           <div
-            v-if="house.photos && house.photos.length > 0"
-            class="absolute inset-0 bg-cover bg-center blur-sm rounded-t-2xl"
-            :style="{ backgroundImage: `url(${house.photos[currentPhotoIndex].url})` }"
-          ></div>
-
-          <!-- Анимация -->
-          <FallDominoAnimate customClass="w-[30vw] h-[10vh]" />
-
-          <!-- Основное изображение -->
-          <img
-            v-if="house.photos && house.photos.length > 0"
-            :src="house.photos[currentPhotoIndex].url"
-            alt=""
-            class="relative z-10 object-contain h-[40vh] transition-opacity duration-300"
-            :class="{ 'opacity-100': isImageLoaded, 'opacity-0': !isImageLoaded }"
-            loading="lazy"
-            @load="handleImageLoad"
-          />
-        </div>
-        <div class="flex justify-between mt-2">
-          <button
-            @click="prevPhoto"
-            :disabled="currentPhotoIndex === 0"
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg"
+            v-for="(photo, index) in house.photos"
+            :key="index"
+            class="slider-item min-w-full flex-shrink-0"
           >
-            Prev
-          </button>
-          <button
-            @click="nextPhoto"
-            :disabled="currentPhotoIndex === house.photos.length - 1"
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            Next
-          </button>
+            <img :src="photo.url" alt="" class="w-full h-full object-cover" loading="lazy" />
+          </div>
         </div>
+      </div>
+      <!-- Кнопки переключения -->
+      <div class="flex justify-between mt-2">
+        <button
+          @click="prevPhoto"
+          :disabled="currentPhotoIndex === 0"
+          class="px-4 py-2 bg-blue-500 text-white rounded-lg"
+        >
+          Prev
+        </button>
+        <button
+          @click="nextPhoto"
+          :disabled="currentPhotoIndex === house.photos.length - 1"
+          class="px-4 py-2 bg-blue-500 text-white rounded-lg"
+        >
+          Next
+        </button>
       </div>
       <div class="mt-4">
         <p class="text-gray-900 font-bold"><strong>Price:</strong> ${{ house.price }}</p>
@@ -80,20 +74,15 @@
 </template>
 
 <script>
-import FallDominoAnimate from '../UI/svg/FallDominoAnimate.vue'
-
 export default {
   name: 'HomeDetail',
   data() {
     return {
-      house: null, // Данные о доме
-      currentPhotoIndex: 0, // Индекс текущего фото
-      touchStartX: 0, // Начальная точка касания
-      touchEndX: 0, // Конечная точка касания
+      house: null,
+      currentPhotoIndex: 0,
+      touchStartX: 0,
+      touchEndX: 0,
     }
-  },
-  components: {
-    FallDominoAnimate,
   },
   async created() {
     const id = Number(this.$route.params.id)
@@ -102,16 +91,6 @@ export default {
     const mockHouses = [
       {
         id: 1,
-        address: {
-          id: 1,
-          city: { id: 1, name: 'Алматы' },
-          district: { id: 1, name: 'Алатау' },
-          street: { id: 1, name: 'Абая' },
-          house_number: 1,
-          apartment_number: 1,
-          floor: 1,
-        },
-        house_type: { id: 1, name: 'Вторичка' },
         photos: [
           {
             id: 1,
@@ -128,17 +107,8 @@ export default {
         ],
         price: 10000000,
         description: 'Описание дома',
-        character: {
-          id: 1,
-          count_rooms: 3,
-          is_with_furniture: true,
-          year_of_construction: 2020,
-          area: 100,
-        },
-        is_sold: false,
       },
     ]
-
     this.house = mockHouses.find((house) => house.id === id) || null
   },
   methods: {
@@ -151,9 +121,6 @@ export default {
       if (this.currentPhotoIndex < this.house.photos.length - 1) {
         this.currentPhotoIndex++
       }
-    },
-    handleImageLoad() {
-      this.isImageLoaded = true
     },
     onTouchStart(event) {
       this.touchStartX = event.changedTouches[0].screenX
@@ -175,5 +142,21 @@ export default {
 </script>
 
 <style>
-/* Дополнительные стили */
+.slider-container {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid #ccc;
+  border-radius: 8px;
+}
+
+.slider-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.slider-item {
+  min-width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
 </style>
