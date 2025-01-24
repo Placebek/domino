@@ -12,7 +12,7 @@ class User(Base):
     lastname = Column(String(75), nullable=False)
     email = Column(String(75), nullable=False, unique=True)
     password = Column(String(75), nullable=False)
-    photo = Column(String(75), nullable=True)
+    photo = Column(String(255), nullable=True)
     phone_number = Column(String(20), nullable=False)
 
     card_id = Column(Integer, ForeignKey('cards.id', ondelete='CASCADE'), nullable=True)
