@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
 import { Form, Field } from 'vee-validate'
 import * as Yup from 'yup'

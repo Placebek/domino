@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <template>
   <div class="fixed bottom-0 w-full h-[7vh] z-50">
     <!-- Создаем дугу -->
@@ -26,6 +27,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '../../stores/auth.store.js'
 import DominoHomeSVG from '../UI/svg/DominoHomeSVG.vue'
 import UserProfileSVG from '../UI/svg/UserProfileSVG.vue'
+// eslint-disable-next-line no-unused-vars
 const authStore = useAuthStore()
 </script>
 

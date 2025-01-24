@@ -1,7 +1,8 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
 import Card from '../../components/UI/Card.vue'
 import logo from '../../assets/img/logo_domino.png'
-import { ref, computed, onMounted } from 'vue'
+import { ref } from 'vue'
 // import { getHouses } from '../../services/houses'
 const product = ref([
   {
