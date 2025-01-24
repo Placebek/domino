@@ -31,3 +31,5 @@ async def create_house(request: HouseCreate, access_token: str, db: AsyncSession
     await db.commit()
     
     return {"message": "House created and linked with seller successfully", "house_id": new_house.id}
+
+
