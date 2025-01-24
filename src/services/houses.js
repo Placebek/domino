@@ -16,3 +16,17 @@ export async function getHouses() {
     return null
   }
 }
+
+export async function getHousesByID(id) {
+  try {
+    const response = await axios(
+      `http://192.168.96.31:8000/auth/admin/requests/${id}`,
+      { headers },
+      { referrerPolicy: 'unsafe-url' },
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching data:', error)
+    return null
+  }
+}
