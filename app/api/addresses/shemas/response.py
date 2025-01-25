@@ -17,3 +17,7 @@ class CityBase(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
+class StreetBase(BaseModel):
+    id: int
+    name: str

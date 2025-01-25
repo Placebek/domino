@@ -3,7 +3,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
 from model.model import Address, District, Street, City
 from app.api.addresses.shemas.create import AddressCreate
-from app.api.addresses.shemas.response import CityBase, DistrictBase
+from app.api.addresses.shemas.response import CityBase, DistrictBase, StreetBase
 from context.context import validate_access_token
 from fastapi import HTTPException
 from typing import List
@@ -54,3 +54,21 @@ async def get_districts_by_city(city_id: int, db: AsyncSession, skip: int = 0, l
     districts = result.all()
 
     return [DistrictBase(id=district.id, name=district.name) for district in districts]
+
+
+async def get_street_by_district(district_id: int, db: AsyncSession, skip: int = 0, limit: int = 10) -> List[StreetBase]:
+    distrist_result = await db.execute(select(District).filter(District.id == district_id))
+    district = distrist_result.scalars().first()
+    if not district:
+        raise HTTPException(status_code=404, detail="District not found")
+
+    result = await db.execute(
+        select(Street.id, Street.name)
+        .join(District, Street.id == District.street_id)
+        .filter(District.id == district_id)
+        .offset(skip)
+        .limit(limit)
+    )
+    streets = result.all()
+
+    return [StreetBase(id=street.id, name=street.name) for street in streets]
