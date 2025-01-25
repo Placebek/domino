@@ -3,15 +3,15 @@
     <!-- Кнопка назад -->
     <button
       @click="$router.push('/')"
-      class="absolute top-4 left-4 px-[2vw] py-[1vh] bg-white text-white rounded-lg z-20"
+      class="absolute top-2 left-2 px-[2vw] py-[1vh] bg-white text-black rounded-lg z-20 shadow-sm hover:bg-gray-100"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="3"
-        stroke="black"
-        class="size-6"
+        stroke="currentColor"
+        class="w-6 h-6"
       >
         <path
           stroke-linecap="round"
@@ -24,45 +24,118 @@
     <div v-if="house">
       <!-- Слайдер -->
       <div
-        class="slider-container w-full h-[40vh] relative overflow-hidden"
+        class="slider-container w-full h-[40vh] relative overflow-hidden rounded-t-2xl"
         @touchstart="onTouchStart"
         @touchend="onTouchEnd"
       >
+        <!-- Размытый фон -->
+        <div
+          v-if="house.photos && house.photos.length > 0"
+          class="absolute inset-0 bg-cover bg-center blur-lg"
+          :style="{ backgroundImage: `url(${house.photos[currentPhotoIndex].url})` }"
+        ></div>
+
         <!-- Лента изображений -->
         <div
-          class="slider-track flex transition-transform duration-500"
+          class="slider-track flex transition-transform duration-500 relative z-10"
           :style="{ transform: `translateX(-${currentPhotoIndex * 100}%)` }"
         >
-          <!-- Каждое изображение -->
           <div
             v-for="(photo, index) in house.photos"
             :key="index"
             class="slider-item min-w-full flex-shrink-0"
           >
-            <img :src="photo.url" alt="" class="w-full h-full object-cover" loading="lazy" />
+            <img
+              :src="photo.url"
+              alt="House photo"
+              class="w-[100vw] h-[40vh] object-contain"
+              loading="lazy"
+            />
           </div>
         </div>
+        <div class="absolute top-[1vh] right-[3vw] text-[2vh] text-white font-medium">
+          {{ currentPhotoIndex + 1 }} / {{ house.photos.length }}
+        </div>
       </div>
-      <!-- Кнопки переключения -->
-      <div class="flex justify-between mt-2">
-        <button
-          @click="prevPhoto"
-          :disabled="currentPhotoIndex === 0"
-          class="px-4 py-2 bg-blue-500 text-white rounded-lg"
+
+      <!-- Информация о доме -->
+      <div
+        class="flex absolute top-[36vh] transform bg-white rounded-t-[20px] w-full items-center flex-col"
+      >
+        <div class="mt-4 px-4 bg-blue-100 w-[95vw] rounded-lg shadow-md">
+          <p class="text-gray-900 font-bold text-[3vh]">{{ formatPrice(house.price) }} Тг</p>
+          <div>
+            <div class="text-[2vh] font-semibold">
+              {{ house.address.city.name }} қ., {{ house.address.district.name }} ауданы,
+              {{ house.address.street.name }} көш., {{ house.address.house_number }}-үй
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="text-[2vh] mt-4 p-2 bg-blue-100 w-[95vw] rounded-lg shadow-md">
+            <div class="font-semibold text-[2.2vh]">Қысқаша сипаттамасы:</div>
+            {{ house.description }}
+          </div>
+        </div>
+        <div
+          class="flex flex-col bg-blue-100 w-[95vw] rounded-lg shadow-md mt-4 p-2 text-[2vh] font-semibold"
         >
-          Prev
-        </button>
-        <button
-          @click="nextPhoto"
-          :disabled="currentPhotoIndex === house.photos.length - 1"
-          class="px-4 py-2 bg-blue-500 text-white rounded-lg"
+          <div class="font-semibold text-[2.2vh]">Пәтер сипаттамасы:</div>
+          <div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Ауданы:</div>
+              <div>{{ house.character.area }} м^2</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Бөлме саны:</div>
+              <div>{{ house.character.count_rooms }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Қабат:</div>
+              <div>{{ house.address.floor }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Жиһазы:</div>
+              <div>{{ house.character.is_with_furniture ? 'Бар' : 'Жоқ' }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Құралған жылы:</div>
+              <div>{{ house.character.year_of_construction }} жыл</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Үй типі:</div>
+              <div>{{ house.house_type.name }}</div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex flex-col bg-blue-100 w-[95vw] rounded-lg shadow-md mt-4 p-2 text-[2vh] font-semibold"
         >
-          Next
-        </button>
-      </div>
-      <div class="mt-4">
-        <p class="text-gray-900 font-bold"><strong>Price:</strong> ${{ house.price }}</p>
-        <p class="text-gray-700"><strong>Description:</strong> {{ house.description }}</p>
+          Мекен-жайы:
+          <div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Қала:</div>
+              <div>{{ house.address.city.name }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Район:</div>
+              <div>{{ house.address.district.name }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Көшесі:</div>
+              <div>{{ house.address.street.name }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Үй нөмірі:</div>
+              <div>{{ house.address.house_number }}</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Пәтер нөмірі:</div>
+              <div>{{ house.address.apartment_number }}</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
       </div>
     </div>
     <div v-else>
@@ -91,6 +164,28 @@ export default {
     const mockHouses = [
       {
         id: 1,
+        address: {
+          id: 1,
+          city: {
+            id: 1,
+            name: 'Алматы',
+          },
+          district: {
+            id: 1,
+            name: 'Алатау',
+          },
+          street: {
+            id: 1,
+            name: 'Абая',
+          },
+          house_number: 1,
+          apartment_number: 1,
+          floor: 1,
+        },
+        house_type: {
+          id: 1,
+          name: 'Вторичка',
+        },
         photos: [
           {
             id: 1,
@@ -106,7 +201,15 @@ export default {
           },
         ],
         price: 10000000,
-        description: 'Описание дома',
+        description: 'Описание дома ',
+        character: {
+          id: 1,
+          count_rooms: 3,
+          is_with_furniture: true,
+          year_of_construction: 2020,
+          area: 100,
+        },
+        is_sold: false,
       },
     ]
     this.house = mockHouses.find((house) => house.id === id) || null
@@ -136,6 +239,9 @@ export default {
       } else if (swipeDistance < -50) {
         this.nextPhoto()
       }
+    },
+    formatPrice(price) {
+      return new Intl.NumberFormat('ru-RU').format(price)
     },
   },
 }
