@@ -3,7 +3,9 @@ from app.api.addresses.shemas.create import AddressCreate
 from database.db import get_db
 from context.context import get_access_token
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.addresses.commands.address_crud import create_address, get_all_cities
+from app.api.addresses.commands.address_crud import create_address, get_all_cities, get_districts_by_city
+from typing import List
+from app.api.addresses.shemas.response import DistrictBase
 
 
 router = APIRouter()
@@ -15,3 +17,7 @@ async def create_address_view(request: AddressCreate, access_token: str = Depend
 @router.get('/cities')
 async def list_cities(skip: int=0, limit: int=10, db: AsyncSession = Depends(get_db)):
     return await get_all_cities(db, skip, limit)
+
+@router.get("/cities/{city_id}/districts", response_model=List[DistrictBase])
+async def list_districts(city_id: int, db: AsyncSession = Depends(get_db), skip: int = 0, limit: int = 10):
+    return await get_districts_by_city(city_id, db, skip, limit)
