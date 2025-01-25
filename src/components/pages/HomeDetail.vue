@@ -135,7 +135,29 @@
             </div>
           </div>
         </div>
-        <div></div>
+        <div
+          class="flex flex-col bg-blue-100 w-[95vw] rounded-lg shadow-md mt-4 p-2 text-[2vh] font-semibold mb-[7vh]"
+        >
+          <div>Үй иесі туралы ақпарат:</div>
+          <div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Аты:</div>
+              <div>Айдос</div>
+            </div>
+            <div class="flex flex-row">
+              <div class="w-[40vw] text-gray-500">Телефон:</div>
+              <div>+7 777 777 77 77</div>
+            </div>
+          </div>
+          <div>
+            <button
+              class="bg-blue-500 text-white rounded-lg px-4 py-2 mt-2 hover:bg-blue-600"
+              @click="$router.push('/video')"
+            >
+              Видеокамера арқылы байланысқа шығу
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <div v-else>
