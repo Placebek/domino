@@ -54,7 +54,7 @@ class House(Base):
 
     address_id = Column(Integer, ForeignKey('addresses.id', ondelete='CASCADE'), nullable=False)
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
-    character_id = Column(Integer, ForeignKey('characteristics.id', ondelete='CASCADE'), nullable=False)
+    characteristic_id = Column(Integer, ForeignKey('characteristics.id', ondelete='CASCADE'), nullable=False)
 
     address = relationship("Address", back_populates="houses")
     type = relationship("HouseType", back_populates="houses")
@@ -68,7 +68,7 @@ class Address(Base):
     __tablename__ = 'addresses'
 
     id = Column(Integer, primary_key=True, index=True)
-    house_number = Column(Integer, nullable=False)
+    house_number = Column(String(20), nullable=False)
     apartment_number = Column(Integer, nullable=True)
     floor = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
@@ -76,6 +76,7 @@ class Address(Base):
     city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)
 
     city = relationship("City", back_populates="addresses")
+    houses = relationship("House", back_populates="address")
 
 
 class City(Base):
