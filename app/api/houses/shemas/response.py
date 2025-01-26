@@ -82,7 +82,7 @@ class HouseBase(BaseModel):
     address: AddressBase
     type: HouseTypeBase
     characteristic: CharacteristicBase
-    photos: Optional[List[PhotoBase]] = None
+    photos: Optional[List[PhotoBase]] = []
 
     class Config:
         orm_mode: True  

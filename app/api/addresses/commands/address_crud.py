@@ -9,16 +9,39 @@ from fastapi import HTTPException
 from typing import List
 
 
-async def create_address(request: AddressCreate, access_token: str, db: AsyncSession):
+async def create_address_with_relations(access_token: str, data: AddressCreate, db: AsyncSession):
     user = await validate_access_token(access_token)
     if not user:  
         raise HTTPException(status_code=401, detail="Invalid access token")
     
+    city_result = await db.execute(select(City).filter(City.id == data.city_id))
+    city = city_result.scalars().first()
+    if not city:
+        raise HTTPException(status_code=404, detail="City not found")
+
+    district_result = await db.execute(select(District).filter(District.id == data.district_id))
+    district = district_result.scalars().first()
+    if not district:
+        raise HTTPException(status_code=404, detail="District not found")
+
+    if district.id != city.district_id:
+        raise HTTPException(status_code=400, detail="District does not belong to the selected city")
+
+    street_result = await db.execute(select(Street).filter(Street.id == data.street_id))
+    street = street_result.scalars().first()
+    if not street:
+        raise HTTPException(status_code=404, detail="Street not found")
+
+    if street.id != district.street_id:
+        raise HTTPException(status_code=400, detail="Street does not belong to the selected district")
+
     new_address = Address(
-        city_id=request.city_id,
-        house_number=request.house_number,
-        apartment_number=request.apartment_number,
-        floor=request.floor
+        house_number=data.house_number,
+        apartment_number=data.apartment_number,
+        floor=data.floor,
+        city_id=data.city_id,
+        district_id=data.district_id,
+        street_id=data.street_id
     )
 
     db.add(new_address)

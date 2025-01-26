@@ -74,6 +74,8 @@ class Address(Base):
     created_at = Column(DateTime(timezone=True), default=func.now())
 
     city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)
+    district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
+    street_id = Column(Integer, ForeignKey('streets.id', ondelete='CASCADE'), nullable=False)
 
     city = relationship("City", back_populates="addresses")
     houses = relationship("House", back_populates="address")
