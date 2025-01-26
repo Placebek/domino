@@ -5,7 +5,7 @@ const headers = { Authorization: 'Bearer ' + tokenData }
 export async function getHouses() {
   try {
     const response = await axios(
-      'http://192.168.69.31:8000/house/get-houses',
+      'http://192.168.43.31:8000/house/get-houses',
       { headers },
       // { referrerPolicy: 'unsafe-url' },
     )

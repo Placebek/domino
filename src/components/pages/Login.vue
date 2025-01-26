@@ -10,11 +10,15 @@ const schema = Yup.object().shape({
   password: Yup.string().required('Құпия сөзді жазу керек'),
 })
 
-function onSubmit(values, { setErrors }) {
+async function onSubmit(values, { setErrors }) {
   const authStore = useAuthStore()
   const { phone_number, password } = values
 
-  return authStore.login(phone_number, password).catch((error) => setErrors({ apiError: error }))
+  try {
+    await authStore.login(phone_number.toString(), password)
+  } catch (error) {
+    setErrors({ apiError: error })
+  }
 }
 </script>
 

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "cert": "rm -rf .cert && mkdir -p .cert && mkcert -key-file ./key.pem -cert-file ./cert.pem '192.168.96.31'"
+    "cert": "rm -rf .cert && mkdir -p .cert && mkcert -key-file ./key.pem -cert-file ./cert.pem '192.168.43.31'"
   },
   "dependencies": {
     "agora-rtc-sdk-ng": "^4.23.1",

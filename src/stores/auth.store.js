@@ -11,12 +11,14 @@ export const useAuthStore = defineStore({
   }),
   actions: {
     async login(phone_number, password) {
+      const request = {
+        phone_number: phone_number,
+        password: password,
+      }
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/login`,
-          { phone_number, password },
-          { referrerPolicy: 'unsafe-url' }, // при необходимости можно убрать
-        )
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, request, {
+          ContentType: 'application/json',
+        })
 
         const user = response.data
 
@@ -24,7 +26,7 @@ export const useAuthStore = defineStore({
         this.user = user
 
         // store user details and jwt in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(access_token))
+        localStorage.setItem('user', JSON.stringify(user.access_token))
 
         // redirect to previous url or default to home page
         router.push(this.returnUrl || '/')
