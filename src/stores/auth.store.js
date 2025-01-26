@@ -2,8 +2,6 @@ import { defineStore } from 'pinia'
 import { router } from '../router/routers'
 import axios from 'axios'
 
-const baseUrl = `${import.meta.env.VITE_API_URL}/auth/admin/login`
-
 export const useAuthStore = defineStore({
   id: 'auth',
   state: () => ({
@@ -15,7 +13,7 @@ export const useAuthStore = defineStore({
     async login(phone_number, password) {
       try {
         const response = await axios.post(
-          baseUrl,
+          `${import.meta.env.VITE_API_URL}/auth/login`,
           { phone_number, password },
           { referrerPolicy: 'unsafe-url' }, // при необходимости можно убрать
         )
@@ -38,19 +36,27 @@ export const useAuthStore = defineStore({
     },
     async register(phone_number, password, first_name, last_name, email) {
       try {
+        const request = {
+          phone_number: phone_number,
+          password: password,
+          firstname: first_name,
+          lastname: last_name,
+          email: email,
+        }
+        debugger
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/admin/register`,
-          { phone_number, password, first_name, last_name, email },
-          { referrerPolicy: 'unsafe-url' }, // при необходимости можно убрать
+          `${import.meta.env.VITE_API_URL}/auth/register`,
+          request,
+          { ContentType: 'application/json' },
         )
 
         const user = response.data
 
         // update pinia state
         this.user = user
-
+        debugger
         // store user details and jwt in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(access_token))
+        localStorage.setItem('user', JSON.stringify(user.access_token))
         // redirect to previous url or default to home page
         router.push(this.returnUrl || '/')
       } catch (error) {
