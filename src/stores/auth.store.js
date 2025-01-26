@@ -26,7 +26,7 @@ export const useAuthStore = defineStore({
         this.user = user
 
         // store user details and jwt in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('user', JSON.stringify(access_token))
 
         // redirect to previous url or default to home page
         router.push(this.returnUrl || '/')
@@ -36,6 +36,30 @@ export const useAuthStore = defineStore({
         throw error
       }
     },
+    async register(phone_number, password, first_name, last_name, email) {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/admin/register`,
+          { phone_number, password, first_name, last_name, email },
+          { referrerPolicy: 'unsafe-url' }, // при необходимости можно убрать
+        )
+
+        const user = response.data
+
+        // update pinia state
+        this.user = user
+
+        // store user details and jwt in local storage to keep user logged in between page refreshes
+        localStorage.setItem('user', JSON.stringify(access_token))
+        // redirect to previous url or default to home page
+        router.push(this.returnUrl || '/')
+      } catch (error) {
+        console.error('Register failed:', error)
+        // здесь можно добавить обработку ошибок, например, вывод уведомления
+        throw error
+      }
+    },
+
     logout() {
       this.user = null
       localStorage.removeItem('user')

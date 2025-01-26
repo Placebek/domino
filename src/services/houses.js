@@ -1,13 +1,13 @@
-const { default: axios } = require('axios')
+import axios from 'axios'
 const tokenData = JSON.parse(localStorage.getItem('user'))?.access_token
 const headers = { Authorization: 'Bearer ' + tokenData }
 
 export async function getHouses() {
   try {
     const response = await axios(
-      'http://192.168.96.31:8000/auth/admin/requests',
+      'http://192.168.69.31:8000/house/get-houses',
       { headers },
-      { referrerPolicy: 'unsafe-url' },
+      // { referrerPolicy: 'unsafe-url' },
     )
     const data = await response.json()
     return data
@@ -20,7 +20,7 @@ export async function getHouses() {
 export async function getHousesByID(id) {
   try {
     const response = await axios(
-      `http://192.168.96.31:8000/auth/admin/requests/${id}`,
+      `http://192.168.69.31:8000/auth/admin/requests/${id}`,
       { headers },
       { referrerPolicy: 'unsafe-url' },
     )
