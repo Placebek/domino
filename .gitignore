@@ -8,4 +8,4 @@ __pycache__/
 *.pyo
 alembic/versions/
 
-uploads/photos/
+uploads/photos_house

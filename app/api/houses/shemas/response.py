@@ -94,7 +94,7 @@ class UserBase(BaseModel):
     lastname: str
     email: str
     phone_number: str
-    photo: str
+    photo: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -118,7 +118,7 @@ class HouseIDBase(BaseModel):
     characteristic: CharacteristicBase
     photos: Optional[List[PhotoBase]] = None
     description: str
-    seller: Optional[List[SellerHouseBase]] 
+    seller: Optional[List[SellerHouseBase]] = []
 
     class Config:
         orm_mode = True

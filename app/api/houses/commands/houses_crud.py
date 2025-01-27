@@ -2,10 +2,10 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
-from model.model import House, SellerHouse, Photo, Address, City, District, Street, HousePhoto, Characteristic, HouseType
+from model.model import House, SellerHouse, Photo, City, District, HousePhoto
 from app.api.houses.shemas.create import HouseCreate
 from context.context import validate_access_token
-from app.api.houses.shemas.response import HouseBase, HouseIDBase, SellerHouseBase, AddressAllBase, HouseTypeBase, CharacteristicBase, PhotoBase
+from app.api.houses.shemas.response import UserBase, HouseIDBase, SellerHouseBase, AddressAllBase, HouseTypeBase, CharacteristicBase, PhotoBase, CityBase, DistrictBase, StreetBase
 
 
 async def create_house(request: HouseCreate, access_token: str, db: AsyncSession):
@@ -95,7 +95,7 @@ async def get_all_houses(db: AsyncSession, skip: int = 0, limit: int = 10):
                 "name": house.type.name if house.type else None,
             },
             "characteristic": {
-                "id": house.id,  # Assuming the characteristic ID is the same as the house ID
+                "id": house.id,  
                 "count_room": house.count_room,
                 "is_furnished": house.is_furnished,
                 "year_of_construction": house.year_of_construction,
@@ -115,46 +115,60 @@ async def get_house_by_id(db: AsyncSession, house_id: int):
     result = await db.execute(
         select(House)
         .options(
-            joinedload(House.address)
-            .joinedload(Address.city)
-            .joinedload(City.district)
-            .joinedload(District.street),
+            joinedload(House.city).joinedload(City.district).joinedload(District.street),
             joinedload(House.type),
-            joinedload(House.characteristic),
             joinedload(House.house_photos).joinedload(HousePhoto.photo),
-            joinedload(House.seller_houses).joinedload(SellerHouse.user)  # Load sellers with user data
+            joinedload(House.seller_houses).joinedload(SellerHouse.user), 
         )
         .filter(House.id == house_id)
     )
-    house = result.scalars().first()  # Fetch the first matching house
+    house = result.scalars().first()  
 
     if not house:
         raise HTTPException(status_code=404, detail="House not found")
 
-    # Debug logging
-    print(f"House {house.id} has seller_houses: {house.seller_houses}")
-
-    # Serialize seller houses
     sellers = [
         SellerHouseBase(
-            user=seller_house.user,
-            house_id=seller_house.house_id
+            user=UserBase.from_orm(seller_house.user),
+            house_id=seller_house.house_id,
         )
         for seller_house in house.seller_houses
     ]
 
-    # Serialize the full house object
-    house_response = HouseBase(
+    house_response = HouseIDBase(
         id=house.id,
         name=house.name,
         price=house.price,
         description=house.description,
         is_selled=house.is_selled,
-        address=AddressAllBase.from_orm(house.address),
+        address=AddressAllBase(
+            id=house.city.id if house.city else None,
+            city=CityBase(
+                id=house.city.id if house.city else None,
+                name=house.city.name if house.city else None,
+                district=DistrictBase(
+                    id=house.city.district.id if house.city and house.city.district else None,
+                    name=house.city.district.name if house.city and house.city.district else None,
+                    street=StreetBase(
+                        id=house.city.district.street.id if house.city and house.city.district and house.city.district.street else None,
+                        name=house.city.district.street.name if house.city and house.city.district and house.city.district.street else None,
+                    ) if house.city and house.city.district and house.city.district.street else None,
+                ) if house.city and house.city.district else None,
+            ) if house.city else None,
+            house_number=house.house_number,
+            apartment_number=house.apartment_number,
+            floor=house.floor
+        ),
         type=HouseTypeBase.from_orm(house.type),
-        characteristic=CharacteristicBase.from_orm(house.characteristic),
+        characteristic=CharacteristicBase(
+            id=house.id, 
+            count_room=house.count_room,
+            is_furnished=house.is_furnished,
+            year_of_construction=house.year_of_construction,
+            area=house.area
+        ),
         photos=[PhotoBase.from_orm(photo.photo) for photo in house.house_photos],
-        seller=sellers
+        seller=sellers,  
     )
 
     return house_response
