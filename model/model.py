@@ -62,7 +62,7 @@ class House(Base):
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
     district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
     street_id = Column(Integer, ForeignKey('streets.id', ondelete='CASCADE'), nullable=False)
-    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  # Внешний ключ для города
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False) 
 
     type = relationship("HouseType", back_populates="houses")
     deals = relationship("Deal", back_populates="house")

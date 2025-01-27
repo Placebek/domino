@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from app.api.houses.shemas.create import HouseCreate, PhotoCreate
-from app.api.houses.shemas.response import HouseBase, HouseIDBase
+from app.api.houses.shemas.response import HouseBase, HouseIDBase, HouseTypeBase
 from database.db import get_db
 from context.context import get_access_token
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.houses.commands.houses_crud import get_all_houses, create_house, get_house_by_id
+from app.api.houses.commands.houses_crud import (
+    get_all_houses, create_house, 
+    get_house_by_id, get_all_house_types
+    )
 
 
 router = APIRouter()
@@ -66,3 +69,8 @@ async def get_houses(db: AsyncSession = Depends(get_db), skip: int = 0, limit: i
 async def get_house(house_id: int, db: AsyncSession = Depends(get_db)):
     house = await get_house_by_id(db, house_id)
     return HouseIDBase.from_orm(house)
+
+@router.get("/get-house_types", response_model=list[HouseTypeBase])
+async def get_house_types(skip: int=0, limit: int=10, db: AsyncSession=Depends(get_db)):
+    house_types = await get_all_house_types(db, skip=skip, limit=limit)
+    return house_types
