@@ -27,7 +27,7 @@ export default {
       }
     },
     prevPhoto() {
-      if (this.currentPhotoIndex > 0) {
+      if (this.currentPhotoIndexDat0) {
         this.isImageLoaded = false // Сбрасываем флаг при смене изображения
         this.currentPhotoIndex--
       }

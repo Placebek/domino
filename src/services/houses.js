@@ -1,5 +1,5 @@
 import axios from 'axios'
-const tokenData = JSON.parse(localStorage.getItem('user'))?.access_token
+const tokenData = JSON.parse(localStorage.getItem('user'))
 const headers = { Authorization: 'Bearer ' + tokenData }
 
 export async function getHouses() {
@@ -9,7 +9,7 @@ export async function getHouses() {
       { headers },
       // { referrerPolicy: 'unsafe-url' },
     )
-    const data = await response.json()
+    const data = await response
     return data
   } catch (error) {
     console.error('Error fetching data:', error)

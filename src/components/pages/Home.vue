@@ -12,7 +12,7 @@ onMounted(async () => {
   isLoading.value = true
   const response = await getHouses()
   if (response) {
-    product.value = response
+    product.value = response.data
     isLoading.value = false
   } else {
     isLoading.value = false
@@ -28,7 +28,9 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col">
-    <div class="relative w-[30vw] h-[12vh] lg:w-[19vw] lg:h-[29vh] md:w-[]">
+    <div
+      class="relative w-[30vw] h-[12vh] lg:w-[19vw] lg:h-[29vh] md:w-[15vw] md:h-[25vh] xl:w-[25vw] xl:h-[35vh] 2xl:w-[30vw] 2xl:h-[40vh]"
+    >
       <img :src="logo" alt="" />
     </div>
     <div
@@ -98,8 +100,20 @@ onMounted(async () => {
     </div>
 
     <div class="text-3xl font-bold text-center">Дома</div>
-    <div v-for="item in product" :key="item.id">
-      <Card :articledata="item" />
+    <div>
+      <div v-if="product.length === 0">
+        <div v-if="isLoading" class="flex justify-center items-center mt-[5vh]">
+          <div
+            class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"
+          ></div>
+        </div>
+        <div v-else class="text-center text-[3vh] font-semibold mt-[2vh]">Ештеңе жоқ</div>
+      </div>
+      <div v-else>
+        <div v-for="item in product" :key="item.id">
+          <Card :articledata="item" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
