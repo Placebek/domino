@@ -10,14 +10,24 @@ from app.api.houses.shemas.response import HouseBase, HouseIDBase, SellerHouseBa
 
 async def create_house(request: HouseCreate, access_token: str, db: AsyncSession):
     user = await validate_access_token(access_token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid access token")
+    
     new_house = House(
         name=request.name,
         price=request.price,
         description=request.description,
-        is_selled=request.is_selled,
-        address_id=request.address_id,
+        house_number=request.house_number,
+        apartment_number=request.apartment_number,
+        floor=request.floor,
         type_id=request.type_id,
-        characteristic_id=request.characteristic_id
+        city_id=request.city_id,
+        district_id=request.district_id,
+        street_id=request.street_id,
+        count_room=request.count_room,
+        is_furnished=request.is_furnished,
+        year_of_construction=request.year_of_construction,
+        area=request.area,
     )
 
     db.add(new_house)
@@ -27,8 +37,8 @@ async def create_house(request: HouseCreate, access_token: str, db: AsyncSession
     for photo_data in request.photos:
         new_photo = Photo(photo_link=photo_data.photo_link)
         db.add(new_photo)
-        await db.commit()  
-        await db.refresh(new_photo)  
+        await db.commit()
+        await db.refresh(new_photo)
 
         house_photo = HousePhoto(house_id=new_house.id, photo_id=new_photo.id)
         db.add(house_photo)
@@ -49,24 +59,57 @@ async def get_all_houses(db: AsyncSession, skip: int = 0, limit: int = 10):
     result = await db.execute(
         select(House)
         .options(
-            joinedload(House.address)
-            .joinedload(Address.city)
-            .joinedload(City.district)
-            .joinedload(District.street),
+            joinedload(House.city).joinedload(City.district).joinedload(District.street),
             joinedload(House.type),
-            joinedload(House.characteristic),
-            joinedload(House.house_photos).joinedload(HousePhoto.photo) 
+            joinedload(House.house_photos).joinedload(HousePhoto.photo),
         )
+        .offset(skip)
+        .limit(limit)
     )
-    houses = result.unique().scalars().all()
+    houses = result.scalars().unique().all()
 
     house_list = []
     for house in houses:
-        house_dict = HouseBase.from_orm(house)
-        house_list.append(house_dict)
-    
-    return house_list
+        house_dict = {
+            "id": house.id,
+            "name": house.name,
+            "price": house.price,
+            "is_selled": house.is_selled,
+            "address": {
+                "id": house.city.id if house.city else None,
+                "city": {
+                    "id": house.city.id if house.city else None,
+                    "name": house.city.name if house.city else None,
+                    "district": {
+                        "id": house.city.district.id if house.city and house.city.district else None,
+                        "name": house.city.district.name if house.city and house.city.district else None,
+                        "street": {
+                            "id": house.city.district.street.id if house.city and house.city.district and house.city.district.street else None,
+                            "name": house.city.district.street.name if house.city and house.city.district and house.city.district.street else None,
+                        } if house.city and house.city.district and house.city.district.street else None,
+                    } if house.city and house.city.district else None,
+                } if house.city else None,
+            },
+            "type": {
+                "id": house.type.id if house.type else None,
+                "name": house.type.name if house.type else None,
+            },
+            "characteristic": {
+                "id": house.id,  # Assuming the characteristic ID is the same as the house ID
+                "count_room": house.count_room,
+                "is_furnished": house.is_furnished,
+                "year_of_construction": house.year_of_construction,
+                "area": house.area,
+            },
+            "photos": [
+                {"id": photo.photo.id, "photo_link": photo.photo.photo_link}
+                for photo in house.house_photos
+            ],
+        }
 
+        house_list.append(house_dict)
+
+    return house_list
 
 async def get_house_by_id(db: AsyncSession, house_id: int):
     result = await db.execute(

@@ -50,18 +50,27 @@ class House(Base):
     price = Column(Integer, nullable=False)
     description = Column(Text, nullable=False)
     is_selled = Column(Boolean, default=False)
+    house_number = Column(String(100), nullable=False)
+    apartment_number = Column(Integer, nullable=False)
+    floor = Column(Integer, nullable=False)
+    count_room = Column(Integer, nullable=False)
+    is_furnished = Column(Boolean, nullable=False)
+    year_of_construction = Column(Integer, nullable=False)
+    area = Column(Float, nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
 
-    address_id = Column(Integer, ForeignKey('addresses.id', ondelete='CASCADE'), nullable=False)
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
-    characteristic_id = Column(Integer, ForeignKey('characteristics.id', ondelete='CASCADE'), nullable=False)
+    district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
+    street_id = Column(Integer, ForeignKey('streets.id', ondelete='CASCADE'), nullable=False)
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  # Внешний ключ для города
 
-    address = relationship("Address", back_populates="houses")
     type = relationship("HouseType", back_populates="houses")
-    characteristic = relationship("Characteristic", back_populates="houses")
     deals = relationship("Deal", back_populates="house")
     seller_houses = relationship("SellerHouse", back_populates="house")
     house_photos = relationship("HousePhoto", back_populates="house")
+    city = relationship("City", back_populates="houses")  # Отношение с City
+    district = relationship("District", back_populates="houses")
+    street = relationship("Street", back_populates="houses")
 
 
 class Address(Base):
@@ -73,12 +82,9 @@ class Address(Base):
     floor = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
 
-    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)
-    district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
-    street_id = Column(Integer, ForeignKey('streets.id', ondelete='CASCADE'), nullable=False)
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  # Внешний ключ для города
 
     city = relationship("City", back_populates="addresses")
-    houses = relationship("House", back_populates="address")
 
 
 class City(Base):
@@ -92,6 +98,7 @@ class City(Base):
 
     addresses = relationship("Address", back_populates="city")
     district = relationship("District", back_populates="cities")
+    houses = relationship("House", back_populates="city")  # Отношение с House
 
 
 class District(Base):
@@ -105,6 +112,7 @@ class District(Base):
 
     street = relationship("Street", back_populates="districts")
     cities = relationship("City", back_populates="district")
+    houses = relationship("House", back_populates="district")
 
 
 class Street(Base):
@@ -115,6 +123,7 @@ class Street(Base):
     created_at = Column(DateTime(timezone=True), default=func.now())
 
     districts = relationship("District", back_populates="street")
+    houses = relationship("House", back_populates="street")
 
 
 class HouseType(Base):
@@ -159,8 +168,6 @@ class Characteristic(Base):
     year_of_construction = Column(Integer, nullable=False)
     area = Column(Float, nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
-
-    houses = relationship("House", back_populates="characteristic")
 
 
 class Deal(Base):

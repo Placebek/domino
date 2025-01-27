@@ -3,17 +3,23 @@ from typing import List, Optional
 
 
 class PhotoCreate(BaseModel):
-    id: int
     photo_link: str
 
 class HouseCreate(BaseModel):
-    name: str
+    name: Optional[str] = None
     price: int
     description: str
-    address_id: int
+    house_number: str
+    apartment_number: Optional[int] = None
+    floor: Optional[int] = None
     type_id: int
-    characteristic_id: int
-    is_selled: Optional[bool] = False
+    city_id: int
+    district_id: int
+    street_id: int
+    count_room: int
+    is_furnished: bool
+    year_of_construction: int
+    area: float
     photos: List[PhotoCreate]
 
     class Config: 
