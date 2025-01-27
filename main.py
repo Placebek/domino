@@ -1,20 +1,14 @@
 from fastapi import FastAPI
 from fastapi.openapi.models import HTTPBearer as HTTPBearerModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.router import route
 
 
 app = FastAPI()
 
-origins = [
-        # "http://localhost:3000",
-    # "http://172.20.10.3:3000", 
-    # "http://172.25.192.1:3000", 
-    # "https://172.20.10.8:3000",
-    # "https://localhost:3000/",
-    # "https://172.25.192.1:3000/",
-    # "https://192.168.193.31:3000/",
-]
+media_folder = "media/"
+app.mount("/media", StaticFiles(directory=media_folder), name="media")
 
 
 app.add_middleware(

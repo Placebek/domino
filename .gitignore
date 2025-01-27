@@ -9,3 +9,6 @@ __pycache__/
 alembic/versions/
 
 uploads/photos_house
+
+cert.pem
+key.pem
