@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
-from model.model import House, SellerHouse, Photo, City, District, HousePhoto, HouseType
+from model.model import House, SellerHouse, Photo, City, District, HousePhoto, HouseType, Characteristic
 from app.api.houses.shemas.create import HouseCreate
 from context.context import validate_access_token
 from app.api.houses.shemas.response import (
@@ -192,4 +192,23 @@ async def get_all_house_types(db: AsyncSession, skip: int=0, limit: int=10):
             name=house_type.name,
         )
         for house_type in house_types
+    ]
+
+async def get_all_characteristics(db: AsyncSession, skip: int=0, limit: int=10):
+    result = await db.execute(
+        select(Characteristic)
+        .offset(skip)
+        .limit(limit)
+    )
+    characteristics = result.scalars().all()
+
+    return [
+        CharacteristicBase(
+            id=characteristic.id,
+            count_room=characteristic.count_room,
+            is_furnished=characteristic.is_furnished,
+            year_of_construction=characteristic.year_of_construction,
+            area=characteristic.area,
+        )
+        for characteristic in characteristics
     ]

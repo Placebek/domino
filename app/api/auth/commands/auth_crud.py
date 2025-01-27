@@ -22,7 +22,7 @@ async def user_register(user: UserCreate, db: AsyncSession):
             firstname = user.firstname,
             lastname = user.lastname,
             email = user.email,
-            password = hash_password(user.password),
+            password = hashed_password,
             phone_number = user.phone_number
         ).returning(User.id)
     )

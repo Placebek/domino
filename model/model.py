@@ -68,7 +68,7 @@ class House(Base):
     deals = relationship("Deal", back_populates="house")
     seller_houses = relationship("SellerHouse", back_populates="house")
     house_photos = relationship("HousePhoto", back_populates="house")
-    city = relationship("City", back_populates="houses")  # Отношение с City
+    city = relationship("City", back_populates="houses")  
     district = relationship("District", back_populates="houses")
     street = relationship("Street", back_populates="houses")
 
@@ -82,7 +82,7 @@ class Address(Base):
     floor = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
 
-    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  # Внешний ключ для города
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  
 
     city = relationship("City", back_populates="addresses")
 
@@ -98,7 +98,7 @@ class City(Base):
 
     addresses = relationship("Address", back_populates="city")
     district = relationship("District", back_populates="cities")
-    houses = relationship("House", back_populates="city")  # Отношение с House
+    houses = relationship("House", back_populates="city") 
 
 
 class District(Base):
