@@ -36,17 +36,14 @@
     </div>
   </div>
   <div>
-    <RouterView />
   </div>
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { useAuthStore } from '../../stores/auth.store.js'
 import DominoHomeSVG from '../UI/svg/DominoHomeSVG.vue'
 import UserProfileSVG from '../UI/svg/UserProfileSVG.vue'
 // eslint-disable-next-line no-unused-vars
-const authStore = useAuthStore()
 </script>
 
 <style scoped>

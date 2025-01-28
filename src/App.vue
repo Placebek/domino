@@ -9,6 +9,6 @@ const route = useRoute()
   <div class="min-h-screen">
     <!-- Условный рендеринг NavMenu -->
     <NavMenu v-if="!['/login', '/register'].includes(route.path)" />
-    <!-- Контент маршрута -->
+    <router-view :key="route.path" />
   </div>
 </template>
