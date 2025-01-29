@@ -5,7 +5,7 @@ const headers = { Authorization: 'Bearer ' + tokenData }
 export async function getHouses() {
   try {
     const response = await axios(
-      `${import.meta.env.VITE_API_URL}/house/get-houses`,
+      `https://py-storm.space/house/get-houses`,
       { headers },
       // { referrerPolicy: 'unsafe-url' },
     )
@@ -20,7 +20,7 @@ export async function getHouses() {
 export async function getHousesByID(id) {
   try {
     const response = await axios(
-      `${import.meta.env.VITE_API_URL}/house/get-houses/${id}`,
+      `https://py-storm.space/house/get-houses/${id}`,
       { headers },
       { referrerPolicy: 'unsafe-url' },
     )

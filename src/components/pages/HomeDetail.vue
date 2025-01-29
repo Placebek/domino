@@ -186,9 +186,7 @@ export default {
     const fetchHouse = async () => {
       const houseId = route.params.id
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/house/get-house/${houseId}`,
-        )
+        const response = await axios.get(`https://py-storm.space/house/get-house/${houseId}`)
         house.value = response.data
       } catch (error) {
         console.error('Ошибка при загрузке данных:', error)

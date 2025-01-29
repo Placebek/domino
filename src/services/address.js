@@ -12,7 +12,7 @@ const headers = { Authorization: 'Bearer ' + tokenData }
  */
 export async function getCities(skip = 0, limit = 10) {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/address/cities`, {
+    const response = await axios.get(`https://py-storm.space/address/cities`, {
       headers,
       params: { skip, limit },
     })
@@ -32,13 +32,10 @@ export async function getCities(skip = 0, limit = 10) {
  */
 export async function getDistrictsByCityId(cityId, skip = 0, limit = 10) {
   try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/address/cities/${cityId}/districts`,
-      {
-        headers,
-        params: { skip, limit },
-      },
-    )
+    const response = await axios.get(`https://py-storm.space/address/cities/${cityId}/districts`, {
+      headers,
+      params: { skip, limit },
+    })
     return response.data
   } catch (error) {
     console.error('Error fetching districts:', error)
@@ -56,7 +53,7 @@ export async function getDistrictsByCityId(cityId, skip = 0, limit = 10) {
 export async function getStreetsByDistrictId(districtId, skip = 0, limit = 10) {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_API_URL}/address/districts/${districtId}/streets`,
+      `https://py-storm.space/address/districts/${districtId}/streets`,
       {
         headers,
         params: { skip, limit },
