@@ -1,5 +1,4 @@
 from celery import Celery
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 import asyncio

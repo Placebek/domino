@@ -1,6 +1,8 @@
 from sqlalchemy import or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from model.model import House
+from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 
 async def search_houses(
@@ -33,6 +35,17 @@ async def search_houses(
     if max_area is not None:
         filters.append(House.area <= max_area)
 
-    stmt = db.query(House).filter(*filters)
+    stmt = (
+    select(House)
+    .filter(*filters)
+    .options(
+        selectinload(House.type),       
+        selectinload(House.city),       
+        selectinload(House.district),   
+        selectinload(House.street),     
+        selectinload(House.house_photos)
+    )
+)
     result = await db.execute(stmt)
-    return result.scalars().all()
+    houses = result.scalars().all()
+    return houses

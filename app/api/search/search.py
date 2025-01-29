@@ -2,13 +2,14 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.db import get_db
 from app.api.search.commands.search_crud import search_houses
-from app.api.houses.shemas.response import HouseBase
+from app.api.search.shemas.response import HouseBase
 from typing import Optional, List
+# from app.api.houses.shemas.response import HouseBase
 
 
 router = APIRouter()
 
-@router.get("/houses", response_model=list[HouseBase])
+@router.get("/houses", response_model=List[HouseBase])
 async def search(
     query: str = Query(None, description="Full-text search query"),
     min_price: int = Query(None, description="Minimum price filter"),

@@ -1,0 +1,1 @@
+celery -A app.api.search.celery.tasks worker --loglevel=info
