@@ -16,7 +16,7 @@ export const useAuthStore = defineStore({
         password: password,
       }
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, request, {
+        const response = await axios.post(`https://py-storm.space/auth/login`, request, {
           ContentType: 'application/json',
         })
 
@@ -46,11 +46,9 @@ export const useAuthStore = defineStore({
           email: email,
         }
         debugger
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/register`,
-          request,
-          { ContentType: 'application/json' },
-        )
+        const response = await axios.post(`https://py-storm.space/auth/register`, request, {
+          ContentType: 'application/json',
+        })
 
         const user = response.data
 
