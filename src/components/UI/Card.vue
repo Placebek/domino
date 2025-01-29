@@ -53,13 +53,15 @@ const formatPrice = (price) => {
         <div
           v-if="articleData.photos && articleData.photos.length > 0"
           class="absolute inset-0 bg-cover bg-center blur-sm rounded-t-2xl"
-          :style="{ backgroundImage: `url(${articleData.photos[currentPhotoIndex].url})` }"
+          :style="{
+            backgroundImage: `url(http://192.168.34.31:8000/${articleData.photos[currentPhotoIndex].photo_link})`,
+          }"
         ></div>
 
         <!-- Основное изображение -->
         <img
           v-if="articleData.photos && articleData.photos.length > 0"
-          :src="articleData.photos[currentPhotoIndex].url"
+          :src="'http://192.168.34.31:8000/' + articleData.photos[currentPhotoIndex].photo_link"
           alt=""
           class="relative z-10 object-contain h-[15vh] transition-opacity duration-300"
           :class="{ 'opacity-100': isImageLoaded, 'opacity-0': !isImageLoaded }"
@@ -127,20 +129,20 @@ const formatPrice = (price) => {
       </div>
 
       <div class="flex gap-2 flex-row ml-2 text-[1.7vh] font-medium">
-        <div class="">{{ articleData.house_type.name }}</div>
+        <div class="">{{ articleData.type.name }}</div>
         <Point custom_style="mt-[0.8vh]" />
-        <div class="">{{ articleData.character.area }} m^2</div>
+        <div class="">{{ articleData.characteristic.area }} m^2</div>
         <Point custom_style="mt-[0.8vh]" />
         <div class="">{{ articleData.address.floor }}-қабат</div>
         <Point custom_style="mt-[0.8vh]" />
-        <div class="">{{ articleData.character.year_of_construction }} ж</div>
+        <div class="">{{ articleData.characteristic.year_of_construction }} ж</div>
       </div>
 
       <div>
-        <div class="ml-2 text-[1.7vh] mt-[1vh]">
+        <!-- <div class="ml-2 text-[1.7vh] mt-[1vh]">
           {{ articleData.address.city.name }} қ., {{ articleData.address.district.name }} ауданы,
           {{ articleData.address.street.name }} көш., {{ articleData.address.house_number }}-үй
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

@@ -32,7 +32,7 @@
         <div
           v-if="house.photos && house.photos.length > 0"
           class="absolute inset-0 bg-cover bg-center blur-lg"
-          :style="{ backgroundImage: `url(${house.photos[currentPhotoIndex].url})` }"
+          :style="{ backgroundImage: `url(${house.photos[currentPhotoIndex].photo_link})` }"
         ></div>
 
         <!-- Лента изображений -->
@@ -46,7 +46,7 @@
             class="slider-item min-w-full flex-shrink-0"
           >
             <img
-              :src="photo.url"
+              :src="photo.photo_link"
               alt="House photo"
               class="w-[100vw] h-[40vh] object-contain"
               loading="lazy"
@@ -66,8 +66,9 @@
           <p class="text-gray-900 font-bold text-[3vh]">{{ formatPrice(house.price) }} Тг</p>
           <div>
             <div class="text-[2vh] font-semibold">
-              {{ house.address.city.name }} қ., {{ house.address.district.name }} ауданы,
-              {{ house.address.street.name }} көш., {{ house.address.house_number }}-үй
+              {{ house.address.city.id }} қ., {{ house.address.city.district.name }} ауданы,
+              {{ house.address.city.district.street.name }} көш.,
+              {{ house.address.house_number }}-үй
             </div>
           </div>
         </div>
@@ -84,11 +85,11 @@
           <div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Ауданы:</div>
-              <div>{{ house.character.area }} м^2</div>
+              <div>{{ house.characteristic.area }} м^2</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Бөлме саны:</div>
-              <div>{{ house.character.count_rooms }}</div>
+              <div>{{ house.characteristic.count_room }}</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Қабат:</div>
@@ -96,15 +97,15 @@
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Жиһазы:</div>
-              <div>{{ house.character.is_with_furniture ? 'Бар' : 'Жоқ' }}</div>
+              <div>{{ house.characteristic.is_furnished ? 'Бар' : 'Жоқ' }}</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Құралған жылы:</div>
-              <div>{{ house.character.year_of_construction }} жыл</div>
+              <div>{{ house.characteristic.year_of_construction }} жыл</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Үй типі:</div>
-              <div>{{ house.house_type.name }}</div>
+              <div>{{ house.type.name }}</div>
             </div>
           </div>
         </div>
@@ -115,15 +116,15 @@
           <div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Қала:</div>
-              <div>{{ house.address.city.name }}</div>
+              <div>{{ house.address.city }}</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Район:</div>
-              <div>{{ house.address.district.name }}</div>
+              <div>{{ house.address.district }}</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Көшесі:</div>
-              <div>{{ house.address.street.name }}</div>
+              <div>{{ house.address.street }}</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Үй нөмірі:</div>
@@ -142,11 +143,11 @@
           <div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Аты:</div>
-              <div>Айдос</div>
+              <div>{{ house.seller[0].user.firstname }} {{ house.seller[0].user.lastname }}</div>
             </div>
             <div class="flex flex-row">
               <div class="w-[40vw] text-gray-500">Телефон:</div>
-              <div>+7 777 777 77 77</div>
+              <div>{{ house.seller[0].user.phone_number }}</div>
             </div>
           </div>
           <div>
@@ -169,102 +170,76 @@
 </template>
 
 <script>
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
+
 export default {
   name: 'HomeDetail',
-  data() {
-    return {
-      house: null,
-      currentPhotoIndex: 0,
-      touchStartX: 0,
-      touchEndX: 0,
-    }
-  },
-  async created() {
-    const id = Number(this.$route.params.id)
+  setup() {
+    const house = ref(null)
+    const currentPhotoIndex = ref(0)
+    const touchStartX = ref(0)
+    const touchEndX = ref(0)
+    const route = useRoute()
 
-    // Моковые данные
-    const mockHouses = [
-      {
-        id: 1,
-        address: {
-          id: 1,
-          city: {
-            id: 1,
-            name: 'Алматы',
-          },
-          district: {
-            id: 1,
-            name: 'Алатау',
-          },
-          street: {
-            id: 1,
-            name: 'Абая',
-          },
-          house_number: 1,
-          apartment_number: 1,
-          floor: 1,
-        },
-        house_type: {
-          id: 1,
-          name: 'Вторичка',
-        },
-        photos: [
-          {
-            id: 1,
-            url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
-          },
-          {
-            id: 2,
-            url: 'https://images.unsplash.com/photo-1737405555489-78b3755eaa81?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          },
-          {
-            id: 3,
-            url: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510__340.jpg',
-          },
-        ],
-        price: 10000000,
-        description: 'Описание дома ',
-        character: {
-          id: 1,
-          count_rooms: 3,
-          is_with_furniture: true,
-          year_of_construction: 2020,
-          area: 100,
-        },
-        is_sold: false,
-      },
-    ]
-    this.house = mockHouses.find((house) => house.id === id) || null
-  },
-  methods: {
-    prevPhoto() {
-      if (this.currentPhotoIndex > 0) {
-        this.currentPhotoIndex--
+    const fetchHouse = async () => {
+      const houseId = route.params.id
+      try {
+        const response = await axios.get(`http://192.168.34.31:8000/house/get-house/${houseId}`)
+        house.value = response.data
+      } catch (error) {
+        console.error('Ошибка при загрузке данных:', error)
       }
-    },
-    nextPhoto() {
-      if (this.currentPhotoIndex < this.house.photos.length - 1) {
-        this.currentPhotoIndex++
+    }
+
+    const prevPhoto = () => {
+      if (currentPhotoIndex.value > 0) {
+        currentPhotoIndex.value--
       }
-    },
-    onTouchStart(event) {
-      this.touchStartX = event.changedTouches[0].screenX
-    },
-    onTouchEnd(event) {
-      this.touchEndX = event.changedTouches[0].screenX
-      this.handleSwipe()
-    },
-    handleSwipe() {
-      const swipeDistance = this.touchEndX - this.touchStartX
+    }
+
+    const nextPhoto = () => {
+      if (currentPhotoIndex.value < house.value.photos.length - 1) {
+        currentPhotoIndex.value++
+      }
+    }
+
+    const onTouchStart = (event) => {
+      touchStartX.value = event.changedTouches[0].screenX
+    }
+
+    const onTouchEnd = (event) => {
+      touchEndX.value = event.changedTouches[0].screenX
+      handleSwipe()
+    }
+
+    const handleSwipe = () => {
+      const swipeDistance = touchEndX.value - touchStartX.value
       if (swipeDistance > 50) {
-        this.prevPhoto()
+        prevPhoto()
       } else if (swipeDistance < -50) {
-        this.nextPhoto()
+        nextPhoto()
       }
-    },
-    formatPrice(price) {
+    }
+
+    const formatPrice = (price) => {
       return new Intl.NumberFormat('ru-RU').format(price)
-    },
+    }
+
+    onMounted(() => {
+      fetchHouse()
+    })
+
+    return {
+      house,
+      currentPhotoIndex,
+      prevPhoto,
+      nextPhoto,
+      onTouchStart,
+      onTouchEnd,
+      formatPrice,
+    }
   },
 }
 </script>

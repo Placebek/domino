@@ -16,9 +16,9 @@
             class="w-[50vw] p-2 border rounded"
           >
             <option value="" disabled selected>Қаланы таңдаңыз</option>
-            <option value="Алматы">Алматы</option>
-            <option value="Астана">Астана</option>
-            <option value="Шымкент">Шымкент</option>
+            <option v-for="city in cities" :key="city.id" :value="city.id">
+              {{ city.name }}
+            </option>
           </select>
         </div>
 
@@ -28,27 +28,33 @@
           <select
             id="district"
             v-model="selectedDistrict"
-            @change="showStreetInput"
+            @change="loadStreets"
             class="w-[50vw] p-2 border rounded flex justify-center items-center"
           >
             <option value="" disabled selected>Районды таңдаңыз</option>
-            <option v-for="district in districts" :key="district" :value="district">
-              {{ district }}
+            <option v-for="district in districts" :key="district.id" :value="district.id">
+              {{ district.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Улица -->
+        <div v-if="streets.length > 0">
+          <label for="street" class="block mb-1">Көше таңдаңыз:</label>
+          <select
+            id="street"
+            v-model="selectedStreet"
+            class="w-[50vw] p-2 border rounded flex justify-center items-center"
+          >
+            <option value="" disabled selected>Көше таңдаңыз</option>
+            <option v-for="street in streets" :key="street.id" :value="street.id">
+              {{ street.name }}
             </option>
           </select>
         </div>
 
         <!-- Улица и дом -->
         <div v-if="showStreetFields">
-          <label for="street" class="block mb-1">Көше:</label>
-          <input
-            id="street"
-            v-model="street"
-            type="text"
-            class="w-[50vw] p-2 border rounded flex justify-center items-center"
-            placeholder="Көше атауын енгізіңіз"
-          />
-
           <label for="houseNumber" class="block mt-3 mb-1">Үй нөмірі:</label>
           <input
             id="houseNumber"
@@ -64,9 +70,18 @@
           <input
             id="apartmentNumber"
             v-model="apartmentNumber"
-            type="text"
+            type="number"
             class="w-[50vw] p-2 border rounded flex justify-center items-center"
             placeholder="Пәтер нөмірін енгізіңіз"
+          />
+
+          <label for="floor" class="block mt-3 mb-1">Қабат:</label>
+          <input
+            id="floor"
+            v-model="floor"
+            type="number"
+            class="w-[50vw] p-2 border rounded flex justify-center items-center"
+            placeholder="Қабатты енгізіңіз"
           />
         </div>
       </div>
@@ -74,7 +89,6 @@
 
     <div class="mb-2 bg-blue-100 p-3 rounded-md">
       <div class="font-semibold mb-2">Үйдің суреттерін жүктеу:</div>
-      <!-- Скрываем стандартный input -->
       <input
         id="photos"
         type="file"
@@ -84,7 +98,6 @@
         class="hidden"
         ref="fileInput"
       />
-      <!-- Кастомная кнопка -->
       <button
         @click="triggerFileInput"
         class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
@@ -114,7 +127,33 @@
     <!-- Дополнительные поля -->
     <div class="mb-2 bg-blue-100 p-3 rounded-md">
       <div class="font-semibold mb-2">Қосымша ақпарат:</div>
-      <label for="area" class="block mb-1">Үйдің ауданы (м²):</label>
+      <label for="name" class="block mb-1">Үйдің атауы:</label>
+      <input
+        id="name"
+        v-model="name"
+        type="text"
+        class="w-[50vw] p-2 border rounded flex justify-center items-center"
+        placeholder="Үйдің атауын енгізіңіз"
+      />
+
+      <label for="description" class="block mt-3 mb-1">Сипаттама:</label>
+      <textarea
+        id="description"
+        v-model="description"
+        class="w-[50vw] p-2 border rounded flex justify-center items-center"
+        placeholder="Үйдің сипаттамасын енгізіңіз"
+      ></textarea>
+
+      <label for="price" class="block mt-3 mb-1">Үйдің бағасы (теңге):</label>
+      <input
+        id="price"
+        v-model="price"
+        type="number"
+        class="w-[50vw] p-2 border rounded flex justify-center items-center"
+        placeholder="Үйдің бағасын енгізіңіз"
+      />
+
+      <label for="area" class="block mt-3 mb-1">Үйдің ауданы (м²):</label>
       <input
         id="area"
         v-model="area"
@@ -130,15 +169,6 @@
         type="number"
         class="w-[50vw] p-2 border rounded flex justify-center items-center"
         placeholder="Құрылған жылын енгізіңіз"
-      />
-
-      <label for="price" class="block mt-3 mb-1">Үйдің бағасы (теңге):</label>
-      <input
-        id="price"
-        v-model="price"
-        type="number"
-        class="w-[50vw] p-2 border rounded flex justify-center items-center"
-        placeholder="Үйдің бағасын енгізіңіз"
       />
 
       <label for="rooms" class="block mt-3 mb-1">Бөлмелер саны:</label>
@@ -157,21 +187,8 @@
         class="w-[50vw] p-2 border rounded flex justify-center items-center"
       >
         <option value="" disabled selected>Таңдаңыз</option>
-        <option value="Иә">Иә</option>
-        <option value="Жоқ">Жоқ</option>
-      </select>
-
-      <label for="heating" class="block mt-3 mb-1">Жылу түрі:</label>
-      <select
-        id="heating"
-        v-model="heating"
-        class="w-[50vw] p-2 border rounded flex justify-center items-center"
-      >
-        <option value="" disabled selected>Таңдаңыз</option>
-        <option value="Орталықтандырылған">Орталықтандырылған</option>
-        <option value="Жеке">Жеке</option>
-        <option value="Газ">Газ</option>
-        <option value="Электр">Электр</option>
+        <option :value="true">Иә</option>
+        <option :value="false">Жоқ</option>
       </select>
 
       <label for="housingType" class="block mt-3 mb-1">Тұрғын үй түрі:</label>
@@ -181,104 +198,156 @@
         class="w-[50vw] p-2 border rounded flex justify-center items-center"
       >
         <option value="" disabled selected>Таңдаңыз</option>
-        <option value="Үй">Үй</option>
-        <option value="Пәтер">Пәтер</option>
+        <option value="1">Үй</option>
+        <option value="2">Пәтер</option>
       </select>
     </div>
 
-    <!-- Контактные данные -->
-    <div class="mb-2 bg-blue-100 p-3 rounded-md">
-      <div class="font-semibold mb-2">Байланыс деректері:</div>
-      <label for="contactName" class="block mb-1">Аты-жөні:</label>
-      <input
-        id="contactName"
-        v-model="contactName"
-        type="text"
-        class="w-[50vw] p-2 border rounded flex justify-center items-center"
-        placeholder="Атыңызды енгізіңіз"
-      />
-
-      <label for="contactPhone" class="block mt-3 mb-1">Телефон нөмірі:</label>
-      <input
-        id="contactPhone"
-        v-model="contactPhone"
-        type="tel"
-        class="w-[50vw] p-2 border rounded flex justify-center items-center"
-        placeholder="Телефон нөмірін енгізіңіз"
-      />
-    </div>
-
-    <button class="bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-600 mb-[7vh]">
+    <button
+      @click="submitForm"
+      class="bg-blue-500 text-white px-5 py-2 rounded hover:bg-blue-600 mb-[7vh]"
+    >
       Жіберу
     </button>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getCities, getDistrictsByCityId, getStreetsByDistrictId } from '../../services/address'
 
 const selectedCity = ref('')
 const districts = ref([])
+const streets = ref([])
+const cities = ref([])
 const selectedDistrict = ref('')
 const showStreetFields = ref(false)
 const street = ref('')
 const houseNumber = ref('')
 const apartmentNumber = ref('')
+const floor = ref('')
+const name = ref('')
+const description = ref('')
+const price = ref('')
 const area = ref('')
 const yearBuilt = ref('')
-const price = ref('')
 const rooms = ref('')
 const furnished = ref('')
-const heating = ref('')
 const housingType = ref('')
-const contactName = ref('')
-const contactPhone = ref('')
 const photos = ref([])
 const fileInput = ref(null)
+
+onMounted(async () => {
+  try {
+    const citiesData = await getCities() // Загружаем города
+    cities.value = citiesData
+  } catch (error) {
+    console.error('Ошибка при загрузке городов:', error)
+  }
+})
+
+const loadDistricts = async () => {
+  if (!selectedCity.value) {
+    districts.value = []
+    return
+  }
+
+  try {
+    const districtsData = await getDistrictsByCityId(selectedCity.value) // Загружаем районы
+    districts.value = districtsData
+  } catch (error) {
+    console.error('Ошибка при загрузке районов:', error)
+  }
+
+  selectedDistrict.value = '' // Сбрасываем выбранный район
+  streets.value = [] // Очищаем список улиц
+  showStreetFields.value = false // Скрываем поля для улиц
+}
+
+// Загрузка улиц при выборе района
+const loadStreets = async () => {
+  if (!selectedDistrict.value) {
+    streets.value = []
+    return
+  }
+
+  try {
+    const streetsData = await getStreetsByDistrictId(selectedDistrict.value) // Загружаем улицы
+    streets.value = streetsData
+    showStreetFields.value = true // Показываем поля для улиц
+  } catch (error) {
+    console.error('Ошибка при загрузке улиц:', error)
+  }
+}
 
 const triggerFileInput = () => {
   fileInput.value.click()
 }
-// Обработка загруженных фотографий
+
 const handlePhotoUpload = (event) => {
-  const files = Array.from(event.target.files) // Преобразуем FileList в массив
+  const files = Array.from(event.target.files)
   files.forEach((file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
       photos.value.push({
         file,
-        preview: e.target.result, // Превью изображения (base64)
+        preview: e.target.result,
       })
     }
-    reader.readAsDataURL(file) // Преобразуем файл в base64
+    reader.readAsDataURL(file)
   })
 }
 
-// Удаление фотографии
 const removePhoto = (index) => {
   photos.value.splice(index, 1)
 }
-// Загружаем районы в зависимости от города
-const loadDistricts = () => {
-  if (selectedCity.value === 'Алматы') {
-    districts.value = ['Алатау', 'Бостандық', 'Медеу', 'Наурызбай']
-  } else if (selectedCity.value === 'Астана') {
-    districts.value = ['Байқоңыр', 'Есіл', 'Сарыарқа', 'Алматы']
-  } else if (selectedCity.value === 'Шымкент') {
-    districts.value = ['Абай', 'Әл-Фараби', 'Еңбекші', 'Қаратау']
-  } else {
-    districts.value = []
-  }
-  selectedDistrict.value = ''
-  showStreetFields.value = false
-}
 
-// Показываем поля для улицы и дома
-const showStreetInput = () => {
-  showStreetFields.value = !!selectedDistrict.value
+const submitForm = async () => {
+  const formData = new FormData()
+
+  formData.append('name', name.value)
+  formData.append('price', parseInt(price.value, 10))
+  formData.append('description', description.value)
+  formData.append('house_number', houseNumber.value)
+  formData.append(
+    'apartment_number',
+    apartmentNumber.value ? parseInt(apartmentNumber.value, 10) : null,
+  )
+  formData.append('floor', floor.value ? parseInt(floor.value, 10) : null)
+  formData.append('type_id', parseInt(housingType.value, 10))
+  formData.append('city_id', parseInt(selectedCity.value, 10))
+  formData.append('district_id', parseInt(selectedDistrict.value, 10))
+  formData.append('street_id', 1) // Здесь нужно заменить на реальный ID улицы, если есть
+  formData.append('count_room', parseInt(rooms.value, 10))
+  formData.append('is_furnished', furnished.value)
+  formData.append('year_of_construction', parseInt(yearBuilt.value, 10))
+  formData.append('area', parseFloat(area.value))
+
+  // Добавляем фотографии в formData
+  photos.value.forEach((photo) => {
+    formData.append('photos', photo.file)
+  })
+
+  const tokenData = JSON.parse(localStorage.getItem('user'))
+
+  try {
+    const response = await fetch('http://192.168.34.31:8000/house/create-house', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + tokenData,
+        // 'Content-Type' не нужно указывать, потому что FormData сам установит нужный заголовок
+      },
+      body: formData,
+    })
+
+    if (response.ok) {
+      alert('Данные успешно отправлены!')
+    } else {
+      alert('Ошибка при отправке данных')
+    }
+  } catch (error) {
+    console.error('Ошибка:', error)
+    alert('Произошла ошибка при отправке данных')
+  }
 }
 </script>
-
-<style scoped>
-/* Дополнительные стили для удобства */
-</style>

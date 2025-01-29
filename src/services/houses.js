@@ -5,7 +5,7 @@ const headers = { Authorization: 'Bearer ' + tokenData }
 export async function getHouses() {
   try {
     const response = await axios(
-      'http://192.168.34.31:8000/house/get-houses',
+      `${import.meta.env.VITE_API_URL}/house/get-houses`,
       { headers },
       // { referrerPolicy: 'unsafe-url' },
     )
@@ -20,7 +20,7 @@ export async function getHouses() {
 export async function getHousesByID(id) {
   try {
     const response = await axios(
-      `http://192.168.34.31:8000/auth/admin/requests/${id}`,
+      `${import.meta.env.VITE_API_URL}/house/get-houses/${id}`,
       { headers },
       { referrerPolicy: 'unsafe-url' },
     )

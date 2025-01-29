@@ -8,16 +8,15 @@ const CHANNEL = 'test' // Название канала
 let localTracks = [] // Локальные треки (видео и аудио)
 let remoteUsers = {} // Объект для отслеживания подключенных пользователей
 let client // Клиент для взаимодействия с Agora
+let cameraMode = 'user' // Режим камеры: 'user' (фронтальная) или 'environment' (задняя)
 
+// Присоединение к каналу
 const joinChannel = async () => {
-  // Создаём клиент
   client = createClient({ mode: 'rtc', codec: 'vp8' })
 
-  // Присоединяемся к каналу
   await client.join(APP_ID, CHANNEL, TOKEN)
 
-  // Создаём потоки для микрофона и камеры
-  localTracks = await createMicrophoneAndCameraTracks()
+  localTracks = await createMicrophoneAndCameraTracks({}, { facingMode: cameraMode })
 
   // Воспроизводим локальный поток
   localTracks[1].play('local-stream')
@@ -26,13 +25,12 @@ const joinChannel = async () => {
   await client.publish(localTracks)
   console.log('Локальный видеопоток опубликован!')
 
-  // Обработка входящих потоков других участников
+  // Подключение других участников
   client.on('user-published', async (user, mediaType) => {
-    await client.subscribe(user, mediaType) // Подписываемся на поток
+    await client.subscribe(user, mediaType)
     console.log('Подключён поток от пользователя:', user.uid)
 
     if (mediaType === 'video') {
-      // Воспроизводим видео другого участника
       const remoteVideoTrack = user.videoTrack
       const playerContainer = document.createElement('div')
       playerContainer.id = `user-${user.uid}`
@@ -44,12 +42,10 @@ const joinChannel = async () => {
     }
 
     if (mediaType === 'audio') {
-      // Воспроизводим аудио другого участника
       const remoteAudioTrack = user.audioTrack
       remoteAudioTrack.play()
     }
 
-    // Сохраняем информацию о подключённом пользователе
     remoteUsers[user.uid] = user
   })
 
@@ -62,32 +58,40 @@ const joinChannel = async () => {
   })
 }
 
+// Отключение от канала
 const leaveChannel = async () => {
-  // Останавливаем и удаляем локальные треки
-  console.log('Покинули канал!')
   localTracks.forEach((track) => track.stop())
   localTracks.forEach((track) => track.close())
-
-  // Удаляем потоки других пользователей
-  const remoteStreamsContainer = document.getElementById('remote-streams')
-  remoteStreamsContainer.innerHTML = ''
-
-  // Отключаемся от канала
+  document.getElementById('remote-streams').innerHTML = ''
   await client.leave()
+  console.log('Покинули канал!')
+}
+
+// Переключение камеры
+const switchCamera = async () => {
+  cameraMode = cameraMode === 'user' ? 'environment' : 'user'
+  const [audioTrack] = localTracks
+  const [videoTrack] = await createMicrophoneAndCameraTracks({}, { facingMode: cameraMode })
+  await client.unpublish(localTracks)
+  localTracks = [audioTrack, videoTrack]
+  videoTrack.play('local-stream')
+  await client.publish(localTracks)
+  console.log(`Камера переключена на ${cameraMode === 'user' ? 'фронтальную' : 'заднюю'}`)
 }
 </script>
 
 <template>
   <div class="agora-container">
     <div id="local-stream" style="width: 400px; height: 300px; background: #000">
-      <!-- Место для локального видео -->
+      <!-- Локальное видео -->
     </div>
     <div id="remote-streams" style="display: flex; gap: 10px; margin-top: 10px">
-      <!-- Место для видео других участников -->
+      <!-- Видео других участников -->
     </div>
     <div>
       <button @click="joinChannel">Присоединиться</button>
       <button @click="leaveChannel">Отключиться</button>
+      <button @click="switchCamera">Переключить камеру</button>
     </div>
   </div>
 </template>
