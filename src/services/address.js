@@ -12,7 +12,7 @@ const headers = { Authorization: 'Bearer ' + tokenData }
  */
 export async function getCities(skip = 0, limit = 10) {
   try {
-    const response = await axios.get('http://192.168.34.31:8000/address/cities', {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/address/cities`, {
       headers,
       params: { skip, limit },
     })
@@ -33,7 +33,7 @@ export async function getCities(skip = 0, limit = 10) {
 export async function getDistrictsByCityId(cityId, skip = 0, limit = 10) {
   try {
     const response = await axios.get(
-      `http://192.168.34.31:8000/address/cities/${cityId}/districts`,
+      `${import.meta.env.VITE_API_URL}/address/cities/${cityId}/districts`,
       {
         headers,
         params: { skip, limit },
@@ -56,7 +56,7 @@ export async function getDistrictsByCityId(cityId, skip = 0, limit = 10) {
 export async function getStreetsByDistrictId(districtId, skip = 0, limit = 10) {
   try {
     const response = await axios.get(
-      `http://192.168.34.31:8000/address/districts/${districtId}/streets`,
+      `${import.meta.env.VITE_API_URL}/address/districts/${districtId}/streets`,
       {
         headers,
         params: { skip, limit },

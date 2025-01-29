@@ -186,7 +186,9 @@ export default {
     const fetchHouse = async () => {
       const houseId = route.params.id
       try {
-        const response = await axios.get(`http://192.168.34.31:8000/house/get-house/${houseId}`)
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/house/get-house/${houseId}`,
+        )
         house.value = response.data
       } catch (error) {
         console.error('Ошибка при загрузке данных:', error)

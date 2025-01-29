@@ -54,14 +54,14 @@ const formatPrice = (price) => {
           v-if="articleData.photos && articleData.photos.length > 0"
           class="absolute inset-0 bg-cover bg-center blur-sm rounded-t-2xl"
           :style="{
-            backgroundImage: `url(http://192.168.34.31:8000/${articleData.photos[currentPhotoIndex].photo_link})`,
+            backgroundImage: `url(https://py-storm.space/${articleData.photos[currentPhotoIndex].photo_link})`,
           }"
         ></div>
 
         <!-- Основное изображение -->
         <img
           v-if="articleData.photos && articleData.photos.length > 0"
-          :src="'http://192.168.34.31:8000/' + articleData.photos[currentPhotoIndex].photo_link"
+          :src="'https://py-storm.space/' + articleData.photos[currentPhotoIndex].photo_link"
           alt=""
           class="relative z-10 object-contain h-[15vh] transition-opacity duration-300"
           :class="{ 'opacity-100': isImageLoaded, 'opacity-0': !isImageLoaded }"

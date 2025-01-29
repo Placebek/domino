@@ -331,7 +331,7 @@ const submitForm = async () => {
   const tokenData = JSON.parse(localStorage.getItem('user'))
 
   try {
-    const response = await fetch('http://192.168.34.31:8000/house/create-house', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/house/create-house`, {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + tokenData,
