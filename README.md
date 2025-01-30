@@ -25,3 +25,7 @@ CREATE TRIGGER trg_update_search_vector
 BEFORE INSERT OR UPDATE ON houses
 FOR EACH ROW
 EXECUTE FUNCTION update_search_vector();
+
+
+activation Elasticsearch:
+C:\elasticsearch-8.17.1\bin>elasticsearch.bat
