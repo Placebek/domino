@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database.db import Base
 from sqlalchemy.dialects.postgresql import TSVECTOR
+from elastic_search_config import es
 
 
 class User(Base):
@@ -59,7 +60,6 @@ class House(Base):
     year_of_construction = Column(Integer, nullable=False)
     area = Column(Float, nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
-    search_vector = Column(TSVECTOR)
 
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
     district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
@@ -74,6 +74,22 @@ class House(Base):
     district = relationship("District", back_populates="houses")
     street = relationship("Street", back_populates="houses")
 
+    async def index_to_elasticsearch(self):
+        doc = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "price": self.price,
+            "floor": self.floor,
+            "count_room": self.count_room,
+            "year_of_construction": self.year_of_construction,
+            "area": self.area,
+            "city_id": self.city_id,
+            "district_id": self.district_id,
+            "street_id": self.street_id,
+            "created_at": self.created_at.isoformat(),
+        }
+        await es.index(index="houses", id=self.id, document=doc)
 
 class Address(Base):
     __tablename__ = 'addresses'

@@ -5,12 +5,13 @@ from app.api.search.commands.search_crud import search_houses
 from app.api.search.shemas.response import HouseBase
 from typing import Optional, List
 # from app.api.houses.shemas.response import HouseBase
+from elastic_search_config import es
 
 
 router = APIRouter()
 
-@router.get("/houses", response_model=List[HouseBase])
-async def search(
+@router.get("/houses")
+async def search_houses(
     query: str = Query(None, description="Full-text search query"),
     min_price: int = Query(None, description="Minimum price filter"),
     max_price: int = Query(None, description="Maximum price filter"),
@@ -24,17 +25,15 @@ async def search(
     max_area: int = Query(None, description="Maximum area"),
     db: AsyncSession = Depends(get_db),
 ):
-    return await search_houses(
-        db=db,
-        query=query,
-        min_price=min_price,
-        max_price=max_price,
-        min_floor=min_floor,
-        max_floor=max_floor,
-        min_count_room=min_count_room,
-        max_count_room=max_count_room,
-        min_year_of_construction=min_year_of_construction,
-        max_year_of_construction=max_year_of_construction,
-        min_area=min_area,
-        max_area=max_area,
-    )
+    es_query = {"bool": {"must": [], "filter": []}}
+
+    if query:
+        es_query["bool"]["must"].append({"match": {"name": query}})
+    
+    if min_price:
+        es_query["bool"]["filter"].append({"range": {"price": {"gte": min_price}}})
+    if max_price:
+        es_query["bool"]["filter"].append({"range": {"price": {"lte": max_price}}})
+
+    results = await es.search(index="houses", query=es_query)
+    return [hit["_source"] for hit in results["hits"]["hits"]]

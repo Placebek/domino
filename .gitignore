@@ -8,7 +8,7 @@ __pycache__/
 *.pyo
 alembic/versions/
 
-uploads/photos_house
+uploads
 
 cert.pem
 key.pem

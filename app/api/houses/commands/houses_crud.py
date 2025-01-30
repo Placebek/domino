@@ -9,6 +9,7 @@ from app.api.houses.shemas.response import (
     UserBase, HouseIDBase, SellerHouseBase, AddressAllBase, HouseTypeBase, 
     CharacteristicBase, PhotoBase, CityBase, DistrictBase, StreetBase
     )
+from app.api.search.celery.tasks import index_house
 
 
 async def create_house(request: HouseCreate, access_token: str, db: AsyncSession):
@@ -54,6 +55,8 @@ async def create_house(request: HouseCreate, access_token: str, db: AsyncSession
     )
     db.add(seller_house)
     await db.commit()
+
+    index_house.delay(new_house.id)
 
     return {"message": "House created and linked with seller successfully", "house_id": new_house.id}
 
