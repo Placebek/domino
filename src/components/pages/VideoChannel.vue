@@ -131,7 +131,7 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .agora-container {
@@ -159,7 +159,7 @@ body, html {
   z-index: 2;
   border: 2px solid #fff;
   border-radius: 10px;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .controls {
