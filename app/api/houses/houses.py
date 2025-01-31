@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends, UploadFile, File, Form
 from app.api.houses.shemas.create import HouseCreate, PhotoCreate
 from app.api.houses.shemas.response import HouseBase, HouseIDBase
@@ -25,7 +26,7 @@ async def create_house_view(
     is_furnished: bool = Form(...),
     year_of_construction: int = Form(...),
     area: float = Form(...),
-    photos: list[UploadFile] = File(...),
+    photos: List[UploadFile] = File(...),
     access_token: str = Depends(get_access_token),
     db: AsyncSession = Depends(get_db),
 ):
@@ -57,7 +58,7 @@ async def create_house_view(
     return await create_house(request=request, access_token=access_token, db=db)
 
 #/get-houses?skip=10&limit=10
-@router.get("/get-houses", response_model=list[HouseBase])
+@router.get("/get-houses", response_model=List[HouseBase])
 async def get_houses(db: AsyncSession = Depends(get_db), skip: int = 0, limit: int = 10):
     houses = await get_all_houses(db, skip=skip, limit=limit)
     return houses

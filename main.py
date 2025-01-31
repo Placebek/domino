@@ -7,8 +7,8 @@ from app.router import route
 
 app = FastAPI()
 
-media_folder = "media/"
-app.mount("/media", StaticFiles(directory=media_folder), name="media")
+media_folder = "uploads/"
+app.mount("/uploads", StaticFiles(directory=media_folder), name="uploads")
 
 
 app.add_middleware(
