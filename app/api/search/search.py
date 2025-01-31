@@ -24,7 +24,7 @@ async def search(
     max_area: int = Query(None, description="Maximum area"),
     db: AsyncSession = Depends(get_db),
 ):
-    return await search_houses(
+    houses = await search_houses(
         db=db,
         query=query,
         min_price=min_price,
@@ -38,3 +38,5 @@ async def search(
         min_area=min_area,
         max_area=max_area,
     )
+
+    return [HouseBase.from_orm(house[0]) for house in houses]

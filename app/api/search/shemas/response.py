@@ -12,3 +12,8 @@ class HouseBase(BaseModel):
     count_room: int
     year_of_construction: int
     area: float
+    search_rank: float
+
+    class Config:
+        orm_mode = True
+        from_attributes = True

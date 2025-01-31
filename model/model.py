@@ -59,7 +59,8 @@ class House(Base):
     year_of_construction = Column(Integer, nullable=False)
     area = Column(Float, nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
-    search_vector = Column(TSVECTOR)
+    search_vector = Column(TSVECTOR, nullable=True)
+    search_rank = Column(Float, nullable=True)
 
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
     district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
