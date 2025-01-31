@@ -2,6 +2,7 @@ from sqlalchemy import Boolean, DateTime, String, Integer, Float, ForeignKey, Te
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database.db import Base
+from sqlalchemy.dialects.postgresql import TSVECTOR
 
 
 class User(Base):
@@ -58,17 +59,19 @@ class House(Base):
     year_of_construction = Column(Integer, nullable=False)
     area = Column(Float, nullable=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
+    search_vector = Column(TSVECTOR, nullable=True)
+    search_rank = Column(Float, nullable=True)
 
     type_id = Column(Integer, ForeignKey('house_types.id', ondelete='CASCADE'), nullable=False)
     district_id = Column(Integer, ForeignKey('districts.id', ondelete='CASCADE'), nullable=False)
     street_id = Column(Integer, ForeignKey('streets.id', ondelete='CASCADE'), nullable=False)
-    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  # Внешний ключ для города
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False) 
 
     type = relationship("HouseType", back_populates="houses")
     deals = relationship("Deal", back_populates="house")
     seller_houses = relationship("SellerHouse", back_populates="house")
     house_photos = relationship("HousePhoto", back_populates="house")
-    city = relationship("City", back_populates="houses")  # Отношение с City
+    city = relationship("City", back_populates="houses")  
     district = relationship("District", back_populates="houses")
     street = relationship("Street", back_populates="houses")
 
@@ -82,7 +85,7 @@ class Address(Base):
     floor = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
 
-    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  # Внешний ключ для города
+    city_id = Column(Integer, ForeignKey('cities.id', ondelete='CASCADE'), nullable=False)  
 
     city = relationship("City", back_populates="addresses")
 
@@ -98,7 +101,7 @@ class City(Base):
 
     addresses = relationship("Address", back_populates="city")
     district = relationship("District", back_populates="cities")
-    houses = relationship("House", back_populates="city")  # Отношение с House
+    houses = relationship("House", back_populates="city") 
 
 
 class District(Base):

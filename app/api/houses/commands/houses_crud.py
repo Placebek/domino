@@ -2,10 +2,14 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import joinedload
-from model.model import House, SellerHouse, Photo, City, District, HousePhoto
+from model.model import House, SellerHouse, Photo, City, District, HousePhoto, HouseType, Characteristic
 from app.api.houses.shemas.create import HouseCreate
 from context.context import validate_access_token
-from app.api.houses.shemas.response import UserBase, HouseIDBase, SellerHouseBase, AddressAllBase, HouseTypeBase, CharacteristicBase, PhotoBase, CityBase, DistrictBase, StreetBase
+from app.api.houses.shemas.response import (
+    UserBase, HouseIDBase, SellerHouseBase, AddressAllBase, HouseTypeBase, 
+    CharacteristicBase, PhotoBase, CityBase, DistrictBase, StreetBase
+    )
+from sqlalchemy.sql import func
 
 
 async def create_house(request: HouseCreate, access_token: str, db: AsyncSession):
@@ -111,6 +115,7 @@ async def get_all_houses(db: AsyncSession, skip: int = 0, limit: int = 10):
 
     return house_list
 
+
 async def get_house_by_id(db: AsyncSession, house_id: int):
     result = await db.execute(
         select(House)
@@ -126,6 +131,15 @@ async def get_house_by_id(db: AsyncSession, house_id: int):
 
     if not house:
         raise HTTPException(status_code=404, detail="House not found")
+    
+    if house.search_rank is None:
+        house.search_rank = 0.1
+    else:
+        house.search_rank += 0.1
+
+    db.add(house)
+    await db.flush()  
+    await db.commit()  
 
     sellers = [
         SellerHouseBase(
@@ -168,7 +182,44 @@ async def get_house_by_id(db: AsyncSession, house_id: int):
             area=house.area
         ),
         photos=[PhotoBase.from_orm(photo.photo) for photo in house.house_photos],
-        seller=sellers,  
+        seller=sellers,
+        search_rank=house.search_rank,  
     )
 
     return house_response
+
+
+async def get_all_house_types(db: AsyncSession, skip: int=0, limit: int=10):
+    result = await db.execute(
+        select(HouseType)
+        .offset(skip)
+        .limit(limit)
+    )
+    house_types = result.scalars().all()
+
+    return [
+        HouseTypeBase(
+            id=house_type.id,
+            name=house_type.name,
+        )
+        for house_type in house_types
+    ]
+
+async def get_all_characteristics(db: AsyncSession, skip: int=0, limit: int=10):
+    result = await db.execute(
+        select(Characteristic)
+        .offset(skip)
+        .limit(limit)
+    )
+    characteristics = result.scalars().all()
+
+    return [
+        CharacteristicBase(
+            id=characteristic.id,
+            count_room=characteristic.count_room,
+            is_furnished=characteristic.is_furnished,
+            year_of_construction=characteristic.year_of_construction,
+            area=characteristic.area,
+        )
+        for characteristic in characteristics
+    ]
