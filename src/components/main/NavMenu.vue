@@ -1,6 +1,6 @@
 <!-- eslint-disable no-unused-vars -->
 <template>
-  <div class="fixed bottom-0 w-full h-[7vh] z-50">
+  <div class="fixed bottom-0 w-full h-[7vh] z-40">
     <!-- Создаем дугу -->
     <div class="arc-menu bg-blue-200 relative">
       <div class="absolute left-[10vw] mt-[1.5vh] z-10">

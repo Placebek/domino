@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
+import { debounce } from 'lodash';
 import Card from '../../components/UI/Card.vue'
 import logo from '../../assets/img/logo_domino.png'
 import { ref, onMounted } from 'vue'
@@ -28,15 +29,14 @@ onMounted(async () => {
 })
 
 // Функция для обработки поиска
-const handleSearch = async () => {
-  
+const handleSearch = debounce(async () => {
   if (searchQuery.value) {
-    const results = await searchHouses(searchQuery.value)
-    searchResults.value = results || [] // Если results undefined, используем пустой массив
+    const results = await searchHouses(searchQuery.value);
+    searchResults.value = results || [];
   } else {
-    searchResults.value = [] // Очищаем результаты, если запрос пустой
+    searchResults.value = [];
   }
-}
+}, 300);
 const truncateDescription = (text, maxLength) => {
       if (text.length > maxLength) {
         return text.slice(0, maxLength) + '...';
