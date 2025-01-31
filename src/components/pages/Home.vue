@@ -3,11 +3,19 @@
 import Card from '../../components/UI/Card.vue'
 import logo from '../../assets/img/logo_domino.png'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
 import { getHouses } from '../../services/houses'
-const product = ref([])
+import { searchHouses } from '../../services/search' // Импортируем функцию поиска
 
+// Данные для домов
+const product = ref([])
 const isLoading = ref(true)
 
+// Данные для поиска
+const searchQuery = ref('')
+const searchResults = ref([])
+const router = useRouter();
+// Загрузка домов при монтировании компонента
 onMounted(async () => {
   isLoading.value = true
   const response = await getHouses()
@@ -19,23 +27,87 @@ onMounted(async () => {
   }
 })
 
-// const filteredProducts = computed(() => {
-//   return Array.isArray(product.value)
-//     ? product.value.filter((post) => post.request_id === null)
-//     : []
-// })
+// Функция для обработки поиска
+const handleSearch = async () => {
+  
+  if (searchQuery.value) {
+    const results = await searchHouses(searchQuery.value)
+    searchResults.value = results || [] // Если results undefined, используем пустой массив
+  } else {
+    searchResults.value = [] // Очищаем результаты, если запрос пустой
+  }
+}
+const truncateDescription = (text, maxLength) => {
+      if (text.length > maxLength) {
+        return text.slice(0, maxLength) + '...';
+      }
+      return text;
+    };
+    const goToDetails = (id) => {
+      router.push(`/${id}`);
+    };
+
+// Форматирование цены
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('ru-RU').format(price)
+}
 </script>
 
 <template>
   <div class="flex flex-col">
+    <!-- Логотип -->
     <div
       class="relative w-[30vw] h-[12vh] lg:w-[19vw] lg:h-[29vh] md:w-[15vw] md:h-[25vh] xl:w-[25vw] xl:h-[35vh] 2xl:w-[30vw] 2xl:h-[40vh]"
     >
       <img :src="logo" alt="" />
     </div>
-    <div
-      class="ml-[2vw] bg-blue-200 px-[3vw] py-[1vh] mt-[2vh] w-[96vw] mr-[2vw] rounded-md relative"
-    >
+
+    <!-- Поле поиска -->
+  <div>
+    <!-- Поле поиска -->  
+    <div class="absolute right-3 top-3">
+<input
+  type="search"
+  v-model="searchQuery"
+  @input="handleSearch"
+  placeholder="Іздеу..."
+  class="shadow-none focus:shadow-none rounded-lg h-[3vh] w-[25vh] py-[0.2vh] px-[1.5vw] text-[1.5vh] focus:outline-none focus:ring-0 focus:border-transparent"
+  style="box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2) inset;"
+/>
+
+
+
+      <!-- Выпадающее меню с результатами поиска -->
+      <div
+        v-if="searchQuery && searchResults?.length > 0"
+        class="absolute z-10 mt-2 w-[25vh] bg-white border border-gray-300 rounded-lg shadow-lg max-h-[40vh] overflow-y-auto"
+      >
+        <ul>
+          <li
+            v-for="house in searchResults"
+            :key="house.id"
+            @click="goToDetails(house.id)"
+            class="p-2 hover:bg-gray-100 cursor-pointer"
+          >
+            <h3 class="text-lg font-bold">{{ house.name }}</h3>
+            <p class="text-sm text-gray-600">{{ truncateDescription(house.description, 50) }}</p>
+            <p class="text-sm">Цена: {{ formatPrice(house.price) }} Тг</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Сообщение, если результатов нет -->
+      <div
+        v-else-if="searchQuery && searchResults?.length === 0"
+        class="absolute z-10 mt-2 w-[25vh] bg-white border border-gray-300 rounded-lg shadow-lg p-2"
+      >
+        <p>Нет результатов по запросу "{{ searchQuery }}"</p>
+      </div>
+    </div>
+  </div>
+
+    <!-- Фильтры -->
+    <div class="ml-[2vw] bg-blue-200 px-[3vw] py-[1vh] mt-[2vh] w-[96vw] mr-[2vw] rounded-md relative">
       <div>
         Фильтрлер:
         <div class="flex flex-row">
@@ -50,7 +122,6 @@ onMounted(async () => {
           </div>
           <div>
             <div>Район:</div>
-
             <select class="w-[30vw]">
               <option>Алатау</option>
               <option>Алатау</option>
@@ -99,6 +170,7 @@ onMounted(async () => {
       </div>
     </div>
 
+    <!-- Список домов -->
     <div class="text-3xl font-bold text-center">Дома</div>
     <div>
       <div v-if="product.length === 0">
@@ -117,3 +189,5 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+
+
