@@ -32,7 +32,7 @@
         <div
           v-if="house.photos && house.photos.length > 0"
           class="absolute inset-0 bg-cover bg-center blur-lg"
-          :style="{ backgroundImage: `url(${house.photos[currentPhotoIndex].photo_link})` }"
+          :style="{ backgroundImage: `url(https://py-storm.space/${articleData.photos[currentPhotoIndex].photo_link})` }"
         ></div>
 
         <!-- Лента изображений -->
@@ -46,7 +46,7 @@
             class="slider-item min-w-full flex-shrink-0"
           >
             <img
-              :src="photo.photo_link"
+              :src="'https://py-storm.space/' + articleData.photos[currentPhotoIndex].photo_link"
               alt="House photo"
               class="w-[100vw] h-[40vh] object-contain"
               loading="lazy"
