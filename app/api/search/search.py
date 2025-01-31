@@ -39,4 +39,4 @@ async def search(
         max_area=max_area,
     )
 
-    return [HouseBase.from_orm(house[0]) for house in houses]
+    return [HouseBase.from_orm(house_data["house"]) for house_data in houses]

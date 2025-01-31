@@ -9,6 +9,7 @@ from app.api.houses.shemas.response import (
     UserBase, HouseIDBase, SellerHouseBase, AddressAllBase, HouseTypeBase, 
     CharacteristicBase, PhotoBase, CityBase, DistrictBase, StreetBase
     )
+from sqlalchemy.sql import func
 
 
 async def create_house(request: HouseCreate, access_token: str, db: AsyncSession):
@@ -130,6 +131,15 @@ async def get_house_by_id(db: AsyncSession, house_id: int):
 
     if not house:
         raise HTTPException(status_code=404, detail="House not found")
+    
+    if house.search_rank is None:
+        house.search_rank = 0.1
+    else:
+        house.search_rank += 0.1
+
+    db.add(house)
+    await db.flush()  
+    await db.commit()  
 
     sellers = [
         SellerHouseBase(
@@ -172,7 +182,8 @@ async def get_house_by_id(db: AsyncSession, house_id: int):
             area=house.area
         ),
         photos=[PhotoBase.from_orm(photo.photo) for photo in house.house_photos],
-        seller=sellers,  
+        seller=sellers,
+        search_rank=house.search_rank,  
     )
 
     return house_response

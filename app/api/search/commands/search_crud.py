@@ -36,17 +36,24 @@ async def search_houses(
         filters.append(House.area <= max_area)
 
     stmt = (
-    select(House, func.ts_rank(House.search_vector, func.to_tsquery('russian', query)).label("search_rank"))
-    .filter(*filters)
-    .order_by(func.ts_rank(House.search_vector, func.to_tsquery('russian', query)).desc())
-    .options(
-        selectinload(House.type),       
-        selectinload(House.city),       
-        selectinload(House.district),   
-        selectinload(House.street),     
-        selectinload(House.house_photos)
+        select(House, House.search_rank)
+        .filter(*filters)
+        .order_by(House.search_rank.desc())
+        .options(
+            selectinload(House.type),
+            selectinload(House.city),
+            selectinload(House.district),
+            selectinload(House.street),
+            selectinload(House.house_photos)
+        )
     )
-)
     result = await db.execute(stmt)
     houses = result.fetchall()
-    return houses
+    house_list = [
+        {
+            "house": house_obj,
+            "search_rank": search_rank
+        }
+        for house_obj, search_rank in houses
+    ]
+    return house_list

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from typing import ClassVar
 
 
 class StreetBase(BaseModel):
@@ -119,6 +120,7 @@ class HouseIDBase(BaseModel):
     photos: Optional[List[PhotoBase]] = None
     description: str
     seller: Optional[List[SellerHouseBase]] = []
+    search_ranks: ClassVar[float] = 0.0
 
     class Config:
         orm_mode = True
